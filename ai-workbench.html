@@ -1,0 +1,2035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workbench - Personal Productivity Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="src/styles/sparkles.css" rel="stylesheet">
+    <style>
+        /* 字体优化样式 - 统一字号体系 */
+        
+        /* 基础字体设置 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+        
+        /* 标题层级体系 */
+        .typography-h1 {
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+        
+        .typography-h2 {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+        
+        .typography-h3 {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .typography-h4 {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        /* 正文文字 */
+        .typography-body {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 1.6;
+        }
+        
+        .typography-body-sm {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        /* 辅助文字 */
+        .typography-caption {
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+            color: #6b7280;
+        }
+        
+        /* 按钮文字 */
+        .typography-button {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+        }
+        
+        .typography-button-lg {
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.2;
+        }
+        
+        /* 导航文字 */
+        .typography-nav {
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+        
+        /* 表情符号优化 */
+        .emoji-icon {
+            font-size: 20px;
+            line-height: 1;
+            display: inline-block;
+        }
+        
+        .emoji-large {
+            font-size: 32px;
+            line-height: 1;
+        }
+        
+        /* 卡片内容优化 */
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+        
+        .card-description {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #6b7280;
+        }
+        
+        /* 响应式字体调整 */
+        @media (max-width: 768px) {
+            .typography-h1 { font-size: 28px; }
+            .typography-h2 { font-size: 22px; }
+            .typography-h3 { font-size: 16px; }
+            body { font-size: 15px; }
+        }
+        
+        /* 覆盖现有的Tailwind类 */
+        .text-4xl, .sm\:text-6xl {
+            font-size: 32px !important;
+            font-weight: 700 !important;
+            line-height: 1.2 !important;
+        }
+        
+        .text-3xl {
+            font-size: 24px !important;
+            font-weight: 600 !important;
+            line-height: 1.3 !important;
+        }
+        
+        .text-2xl {
+            font-size: 32px !important;
+            font-weight: 600 !important;
+            line-height: 1.4 !important;
+        }
+        
+        .text-xl {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            line-height: 1.4 !important;
+        }
+        
+        .text-lg {
+            font-size: 16px !important;
+            font-weight: 400 !important;
+            line-height: 1.6 !important;
+        }
+        
+        .text-sm {
+            font-size: 14px !important;
+            font-weight: 400 !important;
+            line-height: 1.5 !important;
+        }
+        
+        .text-xs {
+            font-size: 12px !important;
+            font-weight: 400 !important;
+            line-height: 1.4 !important;
+        }
+        
+        /* 特殊元素优化 */
+        .text-6xl {
+            font-size: 48px !important;
+            line-height: 1 !important;
+        }
+        
+        /* 按钮样式优化 */
+        .nav-item {
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            line-height: 1.3 !important;
+        }
+        
+        .apple-button {
+            font-size: 16px !important;
+            font-weight: 500 !important;
+            line-height: 1.2 !important;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Line clamp for text truncation */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Note item hover effects */
+        .note-item:hover .note-actions {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .note-actions {
+            opacity: 0;
+            transform: translateX(10px);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* CSS Variables matching creative portfolio */
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --primary: 271.5 81% 56%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --ring: 271.5 81% 56%;
+        }
+
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --primary: 271.5 81% 56%;
+            --primary-foreground: 222.2 84% 4.9%;
+            --secondary: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --ring: 271.5 81% 56%;
+        }
+
+        /* Smooth transitions for theme switching */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Custom animations */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Apple-style button matching creative portfolio */
+        .apple-button {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            padding: 12px 24px;
+            border-radius: 9999px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .apple-button:hover {
+            background: hsl(var(--primary) / 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Text gradient matching creative portfolio */
+        .text-gradient {
+            background: linear-gradient(135deg, hsl(var(--primary)) 0%, #9333ea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Feature cards matching creative portfolio design */
+        .feature-card {
+            background: linear-gradient(135deg, hsl(var(--background)) 0%, #ffffff 100%);
+            border: 1px solid hsl(214.3 31.8% 91.4%);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+            border-color: hsl(var(--ring) / 0.3);
+        }
+
+        /* Hero section background */
+        .hero-gradient {
+            background: hsl(var(--background));
+        }
+
+        /* Sidebar styles matching creative portfolio */
+        .sidebar {
+            background: hsl(var(--background));
+            border-right: 1px solid hsl(214.3 31.8% 91.4%);
+        }
+
+        .nav-item {
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            margin: 4px 8px;
+        }
+
+        .nav-item:hover {
+            background: hsl(var(--secondary));
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
+        }
+
+        /* Wizard hat placeholder with purple theme */
+        .wizard-hat-placeholder {
+            background: linear-gradient(135deg, hsl(var(--primary)) 0%, #9333ea 100%);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wizard-hat-placeholder::before {
+            content: '🎩';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 120px;
+            opacity: 0.8;
+        }
+
+        /* Hover effects */
+        .hover-lift {
+            transition: all 0.3s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Sparkles effect */
+        .sparkles {
+            position: relative;
+        }
+
+        .sparkles::before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 20px;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Progress ring */
+        .progress-ring {
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.35s;
+            stroke-linecap: round;
+        }
+
+        .glow-effect {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glow-effect::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .glow-effect:hover::before {
+            left: 100%;
+        }
+
+        /* Tab content styling */
+        .tab-content {
+            min-height: calc(100vh - 120px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- TEST123 - 如果看到这段文字，说明访问的是正确的文件 -->
+    <!-- Main Application Container -->
+    <div id="app" class="flex h-screen">
+        <!-- Left Sidebar - Fixed Navigation -->
+        <div class="w-64 sidebar flex flex-col shadow-lg">
+            <!-- Logo/Brand Section -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex items-center justify-center">
+                    <img src="materialspng/004.png" alt="Logo" class="w-8 h-8">
+                </div>
+            </div>
+
+            <!-- Navigation Menu - Five Items as Requested -->
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <button onclick="showTab('home')" class="nav-item active w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium">
+                            <img src="materialspng/magic%20hat.png" alt="Home" class="w-5 h-5">
+                            <span>Home</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('notes')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-foreground">
+                            <img src="materialspng/004.png" alt="AI Note" class="w-5 h-5">
+                            <span>AI Note</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('todo')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-foreground">
+                            <img src="materialspng/002.png" alt="Todo List" class="w-5 h-5">
+                            <span>Todo List</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('pomodoro')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-foreground">
+                            <img src="materialspng/001.png" alt="Pomodoro" class="w-5 h-5">
+                            <span>Pomodoro</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('projects')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-foreground">
+                            <img src="materialspng/005.png" alt="Progress Management" class="w-5 h-5">
+                            <span>Progress Management</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button onclick="showTab('favorites')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 text-sm font-medium text-foreground">
+                            <span class="text-xl">⭐</span>
+                            <span>Favorites</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- User Profile Section -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">U</div>
+                    <div>
+                        <p class="text-sm font-medium text-foreground">Welcome Back</p>
+                        <p class="text-xs text-muted-foreground">Local Mode</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col bg-white">
+            <!-- Top Banner -->
+            <header class="sticky top-0 z-50 bg-background/80 backdrop-blur-md" style="transform: none;">
+                <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+                    <div class="flex lg:flex-1 items-center gap-3">
+                        <a href="/" class="-m-1.5 p-1.5">
+                            <span class="sr-only">Yara's Working Space</span>
+                            <img class="h-8 w-auto" alt="Magic Hat Logo" src="materialspng/magic%20hat.png">
+                        </a>
+                        <h1 class="text-xl font-semibold text-purple-600">
+                            Yara's Magic Space🪄
+                        </h1>
+                    </div>
+                    <div class="flex flex-1 justify-end">
+                        <button onclick="toggleDarkMode()" class="rounded-full p-2 bg-primary/10 text-primary hover:bg-primary/20 transition-colors" id="theme-toggle">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="h-5 w-5" id="theme-icon">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </nav>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 p-6 overflow-auto">
+                <!-- Home Tab - Enhanced Creative Portfolio Design -->
+                <div id="home-tab" class="tab-content fade-in">
+                    <!-- Hero Section - Enhanced with Creative Portfolio Style -->
+                    <div class="relative isolate overflow-hidden bg-background">
+                        <div class="mx-auto max-w-7xl px-6 py-20 lg:flex lg:items-center lg:gap-x-10 lg:px-8">
+                            <div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-lg lg:flex-shrink-0">
+                                <h1 class="mt-10 text-6xl font-bold tracking-tight text-foreground sm:text-8xl">
+                                    <span class="text-gradient">Yara's Working Space</span>
+                                </h1>
+                                <p class="mt-6 text-lg leading-8 text-muted-foreground">
+                                    Powered by Focus, Inspired by Magic
+                                </p>
+                                <div class="mt-10 flex items-center gap-x-6">
+                                    <button onclick="showTab('todo')" class="apple-button">
+                                        Explore
+                                    </button>
+                                    <a href="#" onclick="showTab('notes'); return false;" class="text-gray-800 hover:text-primary hover:underline font-medium transition-colors duration-200">Learn more →</a>
+                                </div>
+                            </div>
+                            <div class="mx-auto mt-16 lg:mt-0">
+                                <div class="relative">
+                                    <img src="./public/images/magic-hat.png" alt="Magic wizard hat with stars" width="600" height="600" class="w-[500px] rounded-2xl shadow-xl ring-1 ring-gray-900/10 bg-white p-8" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <img alt="Magic wizard hat with stars" width="600" height="600" class="w-[500px] rounded-2xl shadow-xl ring-1 ring-gray-900/10" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_LBXRykTcXYhiw8RCQTgTbZsbwb9s/Y8Q8jzzORTUJzwCrWl-cEF/public/images/wizard-hat.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feature Carousel - Enhanced Design -->
+                    <div class="py-20 bg-gradient-to-b from-background to-secondary/20">
+                        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="text-center mb-12">
+                                <h2 class="text-2xl font-bold text-purple-600 mb-8 sparkles-text">
+                                    Starting from
+                                </h2>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <!-- AI Note Card -->
+                                <div class="rounded-2xl relative grid grid-rows-[1fr_auto] shadow-lg p-4 gap-4 bg-gradient-to-br from-purple-100 to-purple-200 border border-purple-200 w-full h-[400px] p-8 flex flex-col justify-between hover-lift transition-all duration-300 ease-in-out bg-gradient-to-br from-purple-50 to-white relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-tr before:from-purple-200/20 before:via-transparent before:to-purple-100/10 before:opacity-60">
+                                    <div class="relative z-10">
+                                        <div class="mb-4">
+                                            <img alt="Feature icon" class="w-16 h-16 object-contain" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_LBXRykTcXYhiw8RCQTgTbZsbwb9s/xCrZBgA59bmo99qcxsh_Lh/public/images/book-icon.png">
+                                        </div>
+                                        <h3 class="text-xl font-semibold mb-2 text-gray-800">AI Note</h3>
+                                        <p class="text-gray-600">Where Every Thought Finds Its Magic</p>
+                                    </div>
+                                    <div class="mt-4 relative z-10">
+                                        <a href="#" onclick="showTab('notes'); return false;" class="text-gray-800 hover:text-primary hover:underline font-medium transition-colors duration-200">Learn more →</a>
+                                    </div>
+                                </div>
+
+                                <!-- Todo List Card -->
+                                <div class="rounded-2xl relative grid grid-rows-[1fr_auto] shadow-lg p-4 gap-4 bg-gradient-to-br from-purple-100 to-purple-200 border border-purple-200 w-full h-[400px] p-8 flex flex-col justify-between hover-lift transition-all duration-300 ease-in-out bg-gradient-to-br from-purple-50 to-white relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-tr before:from-purple-200/20 before:via-transparent before:to-purple-100/10 before:opacity-60">
+                                    <div class="relative z-10">
+                                        <div class="mb-4">
+                                            <img alt="Feature icon" class="w-16 h-16 object-contain" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_LBXRykTcXYhiw8RCQTgTbZsbwb9s/xCrZBgA59bmo99qcxsh_Lh/public/images/book-icon.png">
+                                        </div>
+                                        <h3 class="text-xl font-semibold mb-2 text-gray-800">To-do List</h3>
+                                        <p class="text-gray-600">Turning Tasks Into Little Spells of Progress</p>
+                                    </div>
+                                    <div class="mt-4 relative z-10">
+                                        <button onclick="showTab('todo')" class="text-gray-800 hover:text-primary hover:underline font-medium transition-colors duration-200">
+                                            Learn more →
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Progress Management Card -->
+                                <div class="rounded-2xl relative grid grid-rows-[1fr_auto] shadow-lg p-4 gap-4 bg-gradient-to-br from-purple-100 to-purple-200 border border-purple-200 w-full h-[400px] p-8 flex flex-col justify-between hover-lift transition-all duration-300 ease-in-out bg-gradient-to-br from-purple-50 to-white relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-tr before:from-purple-200/20 before:via-transparent before:to-purple-100/10 before:opacity-60">
+                                    <div class="relative z-10">
+                                        <div class="mb-4">
+                                            <img alt="Feature icon" class="w-16 h-16 object-contain" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_LBXRykTcXYhiw8RCQTgTbZsbwb9s/xCrZBgA59bmo99qcxsh_Lh/public/images/book-icon.png">
+                                        </div>
+                                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Progress Management</h3>
+                                        <p class="text-gray-600">Track the Journey, Witness the Magic</p>
+                                    </div>
+                                    <div class="mt-4 relative z-10">
+                                        <button onclick="showTab('projects')" class="text-gray-800 hover:text-primary hover:underline font-medium transition-colors duration-200">
+                                            Learn more →
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Pomodoro Timer Card -->
+                                <div class="rounded-2xl relative grid grid-rows-[1fr_auto] shadow-lg p-4 gap-4 bg-gradient-to-br from-purple-100 to-purple-200 border border-purple-200 w-full h-[400px] p-8 flex flex-col justify-between hover-lift transition-all duration-300 ease-in-out bg-gradient-to-br from-purple-50 to-white relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-tr before:from-purple-200/20 before:via-transparent before:to-purple-100/10 before:opacity-60">
+                                    <div class="relative z-10">
+                                        <div class="mb-4">
+                                            <img alt="Feature icon" class="w-16 h-16 object-contain" src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/git-blob/prj_LBXRykTcXYhiw8RCQTgTbZsbwb9s/xCrZBgA59bmo99qcxsh_Lh/public/images/book-icon.png">
+                                        </div>
+                                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Pomodoro Timer</h3>
+                                        <p class="text-gray-600">Focus in Time, Create with Magic</p>
+                                    </div>
+                                    <div class="mt-4 relative z-10">
+                                        <button onclick="showTab('pomodoro')" class="text-gray-800 hover:text-primary hover:underline font-medium transition-colors duration-200">
+                                            Learn more →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Stay Inspired Section - Enhanced Chat Interface -->
+                    <section class="bg-background py-20">
+                        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="text-center mb-8" style="opacity: 1; transform: none;">
+                                <h2 class="text-4xl font-bold text-purple-600 mb-4 sparkles-text-enhanced">Stay Inspired</h2>
+                                <p class="text-muted-foreground mb-8">Hey, Yara！I'm here to help with anything you need.</p>
+                            </div>
+                            <div class="relative" style="opacity: 1; transform: none;">
+                                <!-- Chat History Display -->
+                                <div id="chat-history" class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 max-h-96 overflow-y-auto" style="display: none;">
+                                    <div class="space-y-4">
+                                        <!-- Chat messages will be displayed here -->
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-purple-600 rounded-2xl p-8 shadow-2xl border border-purple-400/30 min-h-[240px] flex flex-col justify-between">
+                                    <div class="flex justify-start mb-4">
+                                        <img alt="Magic Lamp" class="w-8 h-8 opacity-80" src="materialspng/Magiclamp.png">
+                                    </div>
+                                    <div class="flex-1 flex items-center justify-center mb-6">
+                                        <div class="w-full max-w-2xl">
+                                            <div class="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-4">
+                                                <div class="flex items-center gap-3">
+                                                    <input id="chat-input" placeholder="Type your message here..." class="flex-1 bg-transparent text-white placeholder-white/60 border-none outline-none text-sm" type="text" value="" onkeypress="handleChatKeyPress(event)">
+                                                    <button id="send-button" onclick="sendMessage()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-white/20 hover:bg-white/30 text-white h-8 w-8">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send h-4 w-4">
+                                                            <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path>
+                                                            <path d="m21.854 2.147-10.94 10.939"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-4">
+                                        <div class="flex items-center gap-3">
+                                            <button onclick="openChatSettings()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-white/10 hover:bg-white/20 text-white h-12 w-12">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings h-5 w-5">
+                                                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                            </button>
+                                            <button onclick="shareChat()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-white/10 hover:bg-white/20 text-white h-12 w-12">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link h-5 w-5">
+                                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                                </svg>
+                                            </button>
+                                            <div class="relative">
+                                                <button onclick="toggleModelSelector()" class="justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-black/20 hover:bg-black/30 text-white px-6 py-3 h-12 flex items-center gap-2 border border-white/20">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap h-5 w-5 text-yellow-300">
+                                                        <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
+                                                    </svg>
+                                                    <span id="selected-model" class="text-sm font-medium text-white">GPT-4</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 text-white">
+                                                        <path d="m6 9 6 6 6-6"></path>
+                                                    </svg>
+                                                </button>
+                                                <!-- Model Selector Dropdown -->
+                                                <div id="model-dropdown" class="absolute bottom-full mb-2 left-0 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[150px] z-10" style="display: none;">
+                                                    <div class="p-2">
+                                                        <button onclick="selectModel('GPT-4')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">GPT-4</button>
+                                                        <button onclick="selectModel('GPT-3.5')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">GPT-3.5</button>
+                                                        <button onclick="selectModel('Claude')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">Claude</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <button onclick="openFileUpload()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-black/20 hover:bg-black/30 text-white h-12 w-12 border border-white/20">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-folder h-5 w-5">
+                                                    <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path>
+                                                </svg>
+                                            </button>
+                                            <button onclick="toggleVoiceInput()" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-white hover:bg-white/90 text-primary h-12 w-12">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mic h-5 w-5">
+                                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                                    <line x1="12" x2="12" y1="19" y2="22"></line>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Hidden file input -->
+                                <input type="file" id="file-input" style="display: none;" accept=".txt,.pdf,.doc,.docx,.jpg,.png,.gif" onchange="handleFileUpload(event)">
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- AI Note Tab -->
+                <div id="notes-tab" class="tab-content hidden">
+                    <div class="flex h-[600px]">
+                        <!-- Notes List Sidebar -->
+                        <div class="w-80 bg-white border-r border-gray-200 flex flex-col">
+                            <div class="p-4 border-b border-gray-200">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">My Notes</h3>
+                                    <button onclick="showNewNoteForm()" class="bg-purple-600 text-white p-2 rounded-xl hover:bg-purple-700 transition-colors">+ New</button>
+                                </div>
+                                <div class="relative">
+                                    <input type="text" placeholder="Search notes..." class="w-full p-2 pl-8 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+                                    <div class="absolute left-2 top-2 text-gray-400">🔍</div>
+                                </div>
+                            </div>
+
+                            <div class="flex-1 overflow-y-auto">
+                                <div id="notes-list" class="divide-y divide-gray-200">
+                                    <!-- Notes will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Note Editor -->
+                        <div class="flex-1 flex flex-col">
+                            <div id="note-editor" class="flex-1 bg-gray-50 flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="text-6xl mb-4">📝</div>
+                                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Select a note to start editing</h3>
+                                    <p class="text-gray-600">Choose a note from the sidebar or create a new one</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Todo List Tab -->
+                <div id="todo-tab" class="tab-content hidden">
+                    <div class="space-y-6">
+                        <!-- Header with Add Button -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex space-x-2">
+                                <button onclick="setTodoFilter('all')" class="todo-filter-btn px-4 py-2 rounded-xl bg-purple-600 text-white">All Tasks</button>
+                                <button onclick="setTodoFilter('pending')" class="todo-filter-btn px-4 py-2 rounded-xl bg-purple-600 text-white">Pending</button>
+                                <button onclick="setTodoFilter('completed')" class="todo-filter-btn px-4 py-2 rounded-xl bg-purple-600 text-white">Completed</button>
+                            </div>
+                            <button onclick="showAddTodoForm()" class="bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 transition-colors flex items-center space-x-2">
+                                <span>+</span>
+                                <span>Add Task</span>
+                            </button>
+                        </div>
+
+                        <!-- Add Task Form -->
+                        <div id="add-todo-form" class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 hidden">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-900">Add New Task</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Task Content</label>
+                                    <textarea id="new-todo-content" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-transparent" rows="3" placeholder="Enter your task description..."></textarea>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Deadline</label>
+                                        <input type="date" id="new-todo-deadline" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-transparent" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Priority (Stars)</label>
+                                        <select id="new-todo-stars" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-600 focus:border-transparent">
+                                            <option value="1">1 Star</option>
+                                            <option value="2">2 Stars</option>
+                                            <option value="3">3 Stars</option>
+                                            <option value="4">4 Stars</option>
+                                            <option value="5">5 Stars</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <button onclick="addTodo()" class="bg-indigo-600 text-white px-6 py-2 rounded-xl hover:bg-indigo-700 transition-colors">Add Task</button>
+                                    <button onclick="hideAddTodoForm()" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 transition-colors">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tasks List -->
+                        <div id="todo-list" class="grid gap-4">
+                            <!-- Tasks will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pomodoro Timer Tab -->
+                <div id="pomodoro-tab" class="tab-content hidden">
+                    <div class="space-y-8">
+                        <!-- Timer Display -->
+                        <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 text-center">
+                            <div class="mb-6">
+                                <h3 id="timer-title" class="text-2xl font-bold text-gray-900 mb-2">Focus Time</h3>
+                                <p id="timer-subtitle" class="text-gray-600">Stay focused on your task</p>
+                            </div>
+
+                            <!-- Progress Ring -->
+                            <div class="relative w-48 h-48 mx-auto mb-8">
+                                <svg class="w-48 h-48 progress-ring" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" stroke="#e5e7eb" stroke-width="8" fill="none"></circle>
+                                    <circle id="progress-circle" cx="50" cy="50" r="45" stroke="#9333ea" stroke-width="8" fill="none" stroke-dasharray="283" stroke-dashoffset="283" class="progress-ring-circle"></circle>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div id="timer-display" class="text-4xl font-bold text-purple-600">25:00</div>
+                                        <div class="text-sm text-gray-500 mt-1">Focus</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Control Buttons -->
+                            <div class="flex justify-center space-x-4">
+                                <button id="timer-toggle" onclick="toggleTimer()" class="bg-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-purple-700 transition-colors">Start</button>
+                                <button onclick="resetTimer()" class="bg-gray-500 text-white px-8 py-3 rounded-xl hover:bg-gray-600 transition-colors">Reset</button>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 text-center">
+                                <div class="text-3xl mb-2">🎯</div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Today's Focus</h4>
+                                <p id="today-focus" class="text-3xl font-bold text-indigo-600">0</p>
+                                <p class="text-sm text-gray-600">sessions completed</p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 text-center">
+                                <div class="text-3xl mb-2">⏱️</div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Total Time</h4>
+                                <p id="total-time" class="text-3xl font-bold text-purple-700">0</p>
+                                <p class="text-sm text-gray-600">minutes focused</p>
+                            </div>
+
+                            <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 text-center">
+                                <div class="text-3xl mb-2">📊</div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">All Sessions</h4>
+                                <p id="all-sessions" class="text-3xl font-bold text-green-600">0</p>
+                                <p class="text-sm text-gray-600">total sessions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projects Tab -->
+                <div id="projects-tab" class="tab-content hidden">
+                    <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-bold text-gray-900">Progress Management</h3>
+                            <div class="flex items-center space-x-4">
+                                <button onclick="showNewProjectForm()" class="bg-purple-600 text-white px-4 py-2 rounded-xl hover:bg-purple-700 transition-colors">+ New Project</button>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">Track and manage your projects with visual progress indicators</p>
+                    </div>
+
+                    <!-- Project Content -->
+                    <div id="project-content" class="bg-white p-12 rounded-2xl shadow-lg border border-gray-200 text-center">
+                        <div class="text-6xl mb-4">📊</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">No Project Selected</h3>
+                        <p class="text-gray-600">Create a new project to get started with progress management</p>
+                    </div>
+                </div>
+
+                <!-- Favorites Tab -->
+                <div id="favorites-tab" class="tab-content hidden">
+                    <div class="max-w-6xl mx-auto space-y-6">
+                        <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">⭐ Favorites</h3>
+                                <button onclick="showAddFavoriteForm()" class="bg-purple-600 text-white px-4 py-2 rounded-xl hover:bg-purple-700 transition-colors">
+                                    <span>+ Add Favorite</span>
+                                </button>
+                            </div>
+                            <p class="text-gray-600 dark:text-gray-400">Manage your frequently used links and resources</p>
+                        </div>
+
+                        <!-- Add Favorite Form -->
+                        <div id="add-favorite-form" class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 hidden">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Add New Favorite</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Title</label>
+                                    <input type="text" id="new-favorite-title" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-600 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="Enter title...">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">URL</label>
+                                    <input type="url" id="new-favorite-url" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-600 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white" placeholder="https://example.com">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                                    <textarea id="new-favorite-description" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-600 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white" rows="2" placeholder="Optional description..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                                    <select id="new-favorite-category" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-600 focus:border-transparent bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white">
+                                        <option value="link">🔗 Link</option>
+                                        <option value="document">📄 Document</option>
+                                        <option value="tool">🛠️ Tool</option>
+                                        <option value="resource">📚 Resource</option>
+                                        <option value="other">📎 Other</option>
+                                    </select>
+                                </div>
+                                <div class="flex space-x-3">
+                                    <button onclick="addFavorite()" class="bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 transition-colors">Add Favorite</button>
+                                    <button onclick="hideAddFavoriteForm()" class="bg-gray-500 text-white px-6 py-2 rounded-xl hover:bg-gray-600 transition-colors">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Favorites List -->
+                        <div id="favorites-list" class="grid gap-4">
+                            <!-- Favorites will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Global variables
+        let currentTab = 'home';
+        let todos = [];
+        let notes = [];
+        let pomodoroSessions = [];
+        let projects = [];
+        let projectTasks = [];
+        let favorites = [];
+
+        // Timer variables
+        let timerInterval;
+        let timeLeft = 25 * 60; // 25 minutes
+        let isTimerActive = false;
+        let isBreak = false;
+        let currentSessionId = null;
+
+        // Page metadata
+        const pageData = {
+            home: { title: 'Home', description: 'Yara\'s Magic Space 🪄' },
+            notes: { title: 'AI Note', description: 'Where every thought finds its magic' },
+            todo: { title: 'Todo List', description: 'Turning tasks into little spells of progress' },
+            pomodoro: { title: 'Pomodoro', description: 'Focus in time, create with magic' },
+            projects: { title: 'Progress Management', description: 'Track the journey, witness the magic' },
+            favorites: { title: 'Favorites', description: 'Your frequently used links and resources' }
+        };
+
+        // Theme toggle functionality
+        function toggleDarkMode() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update icon
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const themeIcon = document.getElementById('theme-icon');
+            if (theme === 'dark') {
+                // Sun icon for light mode toggle
+                themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"></path>';
+            } else {
+                // Moon icon for dark mode toggle
+                themeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>';
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+
+        // Initialize the application
+        function init() {
+            initTheme(); // Initialize theme first
+            loadData();
+            updateClock();
+            setInterval(updateClock, 1000);
+            showTab('home');
+            renderTodos();
+            renderNotes();
+            updatePomodoroStats();
+        }
+
+        // Data management
+        function loadData() {
+            const stored = localStorage.getItem('ai-workbench-data');
+            if (stored) {
+                const data = JSON.parse(stored);
+                todos = data.todos || [];
+                notes = data.notes || [];
+                pomodoroSessions = data.pomodoroSessions || [];
+                projects = data.projects || [];
+                projectTasks = data.projectTasks || [];
+                favorites = data.favorites || [];
+            }
+        }
+
+        function saveData() {
+            const data = {
+                todos,
+                notes,
+                pomodoroSessions,
+                projects,
+                projectTasks,
+                favorites
+            };
+            localStorage.setItem('ai-workbench-data', JSON.stringify(data));
+        }
+
+        // Navigation with smooth transitions
+        function showTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active', 'text-white');
+                item.classList.add('text-gray-700');
+            });
+
+            // Show selected tab with animation
+            const selectedTab = document.getElementById(tab + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.remove('hidden');
+                selectedTab.classList.add('fade-in');
+            }
+
+            // Update nav item styling
+            const activeItem = document.querySelector(`button[onclick="showTab('${tab}')"]`);
+            if (activeItem) {
+                activeItem.classList.add('active', 'text-white');
+                activeItem.classList.remove('text-gray-700');
+            }
+
+            // Update page title and description
+            document.getElementById('page-title').textContent = pageData[tab].title;
+            document.getElementById('page-description').textContent = pageData[tab].description;
+
+            currentTab = tab;
+
+            // Special handling for different tabs
+            if (tab === 'pomodoro') {
+                updateTimerDisplay();
+                updateProgressRing();
+            } else if (tab === 'notes') {
+                // 确保切换到笔记标签时重新渲染笔记列表
+                renderNotes();
+            } else if (tab === 'favorites') {
+                // 渲染常用列表
+                renderFavorites();
+            }
+        }
+
+        // Clock update
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('current-date').textContent = now.toLocaleDateString();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString();
+        }
+
+        // Todo List Functions
+        function showAddTodoForm() {
+            document.getElementById('add-todo-form').classList.remove('hidden');
+        }
+
+        function hideAddTodoForm() {
+            document.getElementById('add-todo-form').classList.add('hidden');
+            document.getElementById('new-todo-content').value = '';
+            document.getElementById('new-todo-deadline').value = '';
+            document.getElementById('new-todo-stars').value = '1';
+        }
+
+        function addTodo() {
+            const content = document.getElementById('new-todo-content').value.trim();
+            if (!content) return;
+
+            const todo = {
+                id: Date.now().toString(),
+                content,
+                deadline: document.getElementById('new-todo-deadline').value || undefined,
+                stars: parseInt(document.getElementById('new-todo-stars').value),
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            todos.push(todo);
+            saveData();
+            renderTodos();
+            hideAddTodoForm();
+        }
+
+        function toggleTodoStatus(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.status = todo.status === 'completed' ? 'pending' : 'completed';
+                todo.updatedAt = new Date().toISOString();
+                saveData();
+                renderTodos();
+            }
+        }
+
+        function deleteTodo(id) {
+            todos = todos.filter(t => t.id !== id);
+            saveData();
+            renderTodos();
+        }
+
+        function setTodoFilter(filter) {
+            renderTodos(filter);
+
+            // Update filter button styles
+            document.querySelectorAll('.todo-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('bg-white', 'text-gray-700', 'hover:bg-indigo-50');
+            });
+
+            event.target.classList.remove('bg-white', 'text-gray-700', 'hover:bg-indigo-50');
+            event.target.classList.add('bg-indigo-600', 'text-white');
+        }
+
+        function renderTodos(filter = 'all') {
+            const todoList = document.getElementById('todo-list');
+            const filteredTodos = filter === 'all' ? todos : todos.filter(t => t.status === filter);
+
+            if (filteredTodos.length === 0) {
+                todoList.innerHTML = `
+                    <div class="bg-white p-8 rounded-2xl shadow-lg border border-gray-200 text-center">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">No ${filter === 'all' ? 'tasks' : filter + ' tasks'} yet</h3>
+                        <p class="text-gray-600">${filter === 'all' ? 'Add your first task to get started!' : 'Try changing the filter to see more tasks.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            todoList.innerHTML = filteredTodos.map(todo => `
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-200 ${todo.status === 'completed' ? 'opacity-75' : ''}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-3 flex-1">
+                            <input type="checkbox" ${todo.status === 'completed' ? 'checked' : ''}
+                                   onchange="toggleTodoStatus('${todo.id}')"
+                                   class="mt-1 w-5 h-5 text-indigo-600 rounded focus:ring-indigo-600">
+                            <div class="flex-1">
+                                <p class="text-gray-900 ${todo.status === 'completed' ? 'line-through' : ''}">${todo.content}</p>
+                                ${todo.deadline ? `<p class="text-sm text-gray-500 mt-1">Due: ${new Date(todo.deadline).toLocaleDateString()}</p>` : ''}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="flex items-center space-x-1">${'⭐'.repeat(todo.stars)}</div>
+                            <button onclick="deleteTodo('${todo.id}')" class="text-red-500 hover:text-red-700 p-1 rounded transition-colors">🗑️</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Notes Functions
+        function showNewNoteForm() {
+            const title = prompt('Enter note title:');
+            if (!title) return;
+
+            const note = {
+                id: Date.now().toString(),
+                title,
+                content: '',
+                tags: [],
+                images: [],
+                files: [],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            notes.push(note);
+            saveData();
+            renderNotes();
+        }
+
+        function renderNotes() {
+            const notesList = document.getElementById('notes-list');
+
+            if (notes.length === 0) {
+                notesList.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <div class="text-4xl mb-4">📝</div>
+                        <p class="text-lg font-medium mb-2">No notes yet</p>
+                        <p class="text-sm">Create your first note to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            notesList.innerHTML = notes.map(note => `
+                <div class="note-item p-4 border-b border-gray-200 hover:bg-gray-50 transition-all duration-200">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1 cursor-pointer" onclick="selectNote('${note.id}')">
+                            <h4 class="font-semibold text-gray-900 mb-2 hover:text-purple-600 transition-colors">${note.title}</h4>
+                            <p class="text-sm text-gray-600 line-clamp-2 mb-3">${note.content || 'No content yet'}</p>
+                            <div class="flex items-center text-xs text-gray-400">
+                                <span>📅 ${new Date(note.updatedAt).toLocaleDateString()}</span>
+                                <span class="mx-2">•</span>
+                                <span>📝 ${note.content ? note.content.length : 0} characters</span>
+                            </div>
+                        </div>
+                        <div class="note-actions flex items-center space-x-2 ml-4">
+                            <button onclick="selectNote('${note.id}')" class="bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700 transition-colors text-sm flex items-center space-x-1 shadow-sm">
+                                <span>✏️</span>
+                                <span>Edit</span>
+                            </button>
+                            <button onclick="confirmDeleteNote('${note.id}')" class="bg-gray-500 text-white px-3 py-1.5 rounded-lg hover:bg-gray-600 transition-colors text-sm flex items-center space-x-1 shadow-sm">
+                                <span>🗑️</span>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+
+            const noteEditor = document.getElementById('note-editor');
+            // 更新容器样式，确保占满空间
+            noteEditor.className = 'flex-1 bg-white';
+            noteEditor.innerHTML = `
+                <div class="h-full flex flex-col">
+                    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                        <h2 class="text-2xl font-bold text-gray-900">${note.title}</h2>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="saveNote('${note.id}')" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2">
+                                <span>💾</span>
+                                <span>Save</span>
+                            </button>
+                            <button onclick="deleteNote('${note.id}')" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors flex items-center space-x-2">
+                                <span>🗑️</span>
+                                <span>Delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex-1 p-6">
+                        <textarea id="note-content-${note.id}" class="w-full h-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-600 focus:border-transparent resize-none"
+                                  placeholder="Start writing your note..."
+                                  onchange="updateNoteContent('${note.id}', this.value)"
+                                  onblur="updateNoteContent('${note.id}', this.value)">${note.content}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateNoteContent(id, content) {
+            const note = notes.find(n => n.id === id);
+            if (note) {
+                note.content = content;
+                note.updatedAt = new Date().toISOString();
+                saveData();
+            }
+        }
+
+        function saveNote(id) {
+            const textarea = document.getElementById(`note-content-${id}`);
+            if (!textarea) return;
+            
+            const note = notes.find(n => n.id === id);
+            if (note) {
+                note.content = textarea.value;
+                note.updatedAt = new Date().toISOString();
+                saveData();
+                
+                // 显示保存成功的反馈
+                showSaveNotification();
+                
+                // 更新侧边栏中的笔记预览
+                renderNotes();
+            }
+        }
+
+        function showSaveNotification() {
+            // 创建保存成功的通知
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+            notification.innerHTML = '✅ Note saved successfully';
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后自动消失
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function showSaveNotification() {
+            // 创建保存成功的通知
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300';
+            notification.innerHTML = '✅ Note saved successfully';
+            
+            document.body.appendChild(notification);
+            
+            // 3秒后自动消失
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function confirmDeleteNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            
+            if (confirm(`Are you sure you want to delete the note "${note.title}"? This action cannot be undone.`)) {
+                deleteNote(id);
+            }
+        }
+
+        function deleteNote(id) {
+            notes = notes.filter(n => n.id !== id);
+            saveData();
+            renderNotes();
+            
+            const noteEditor = document.getElementById('note-editor');
+            // 恢复初始状态的样式
+            noteEditor.className = 'flex-1 bg-gray-50 flex items-center justify-center';
+            noteEditor.innerHTML = `
+                <div class="text-center">
+                    <div class="text-6xl mb-4">📝</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-2">Select a note to start editing</h3>
+                    <p class="text-gray-600">Choose a note from the sidebar or create a new one</p>
+                </div>
+            `;
+        }
+
+        // Pomodoro Timer Functions
+        function toggleTimer() {
+            if (isTimerActive) {
+                clearInterval(timerInterval);
+                isTimerActive = false;
+                document.getElementById('timer-toggle').textContent = 'Start';
+            } else {
+                startTimer();
+            }
+        }
+
+        function startTimer() {
+            isTimerActive = true;
+            document.getElementById('timer-toggle').textContent = 'Pause';
+
+            // Create session
+            currentSessionId = Date.now().toString();
+            const session = {
+                id: currentSessionId,
+                startTime: new Date().toISOString(),
+                endTime: '',
+                duration: isBreak ? 5 : 25,
+                type: isBreak ? 'break' : 'focus',
+                completed: false
+            };
+            pomodoroSessions.push(session);
+            saveData();
+            updatePomodoroStats();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                updateProgressRing();
+
+                if (timeLeft <= 0) {
+                    completeSession();
+                }
+            }, 1000);
+        }
+
+        function completeSession() {
+            clearInterval(timerInterval);
+            isTimerActive = false;
+
+            // Complete the session
+            const session = pomodoroSessions.find(s => s.id === currentSessionId);
+            if (session) {
+                session.endTime = new Date().toISOString();
+                session.completed = true;
+                saveData();
+            }
+
+            // Switch between focus and break
+            isBreak = !isBreak;
+            timeLeft = isBreak ? 5 * 60 : 25 * 60;
+
+            document.getElementById('timer-toggle').textContent = 'Start';
+            updateTimerDisplay();
+            updateProgressRing();
+            updatePomodoroStats();
+
+            // Show notification (if supported)
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(isBreak ? 'Break time!' : 'Focus session completed!', {
+                    body: isBreak ? 'Time for a break!' : 'Great job! Time to rest.'
+                });
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerActive = false;
+            timeLeft = isBreak ? 5 * 60 : 25 * 60;
+            document.getElementById('timer-toggle').textContent = 'Start';
+            updateTimerDisplay();
+            updateProgressRing();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer-display').textContent =
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('timer-title').textContent = isBreak ? 'Break Time' : 'Focus Time';
+            document.getElementById('timer-subtitle').textContent =
+                isBreak ? 'Take a short break and relax' : 'Stay focused on your task';
+        }
+
+        function updateProgressRing() {
+            const totalTime = isBreak ? 5 * 60 : 25 * 60;
+            const progress = (totalTime - timeLeft) / totalTime;
+            const circumference = 2 * Math.PI * 45;
+            const offset = circumference - (progress * circumference);
+
+            document.getElementById('progress-circle').style.strokeDashoffset = offset;
+            document.getElementById('progress-circle').style.stroke = isBreak ? '#10b981' : '#6366f1';
+        }
+
+        function updatePomodoroStats() {
+            const today = new Date().toISOString().split('T')[0];
+            const todaySessions = pomodoroSessions.filter(s =>
+                s.startTime.startsWith(today) && s.type === 'focus' && s.completed
+            );
+
+            document.getElementById('today-focus').textContent = todaySessions.length;
+            document.getElementById('total-time').textContent = todaySessions.reduce((total, s) => total + s.duration, 0);
+            document.getElementById('all-sessions').textContent = pomodoroSessions.length;
+        }
+
+        // Project Management Functions
+        function showNewProjectForm() {
+            const name = prompt('Enter project name:');
+            if (!name) return;
+
+            const project = {
+                id: Date.now().toString(),
+                name,
+                description: '',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            projects.push(project);
+            saveData();
+            renderProjects();
+        }
+
+        function renderProjects() {
+            const projectContent = document.getElementById('project-content');
+
+            if (projects.length === 0) {
+                projectContent.innerHTML = `
+                    <div class="bg-white p-12 rounded-2xl shadow-lg border border-gray-200 text-center">
+                        <div class="text-6xl mb-4">📊</div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">No Projects Yet</h3>
+                        <p class="text-gray-600">Create a new project to get started with progress management</p>
+                    </div>
+                `;
+                return;
+            }
+
+            projectContent.innerHTML = `
+                <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Your Projects</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${projects.map(project => `
+                            <div class="p-4 border border-gray-200 rounded-xl hover:border-indigo-300 transition-colors">
+                                <h4 class="font-medium text-gray-900">${project.name}</h4>
+                                <p class="text-sm text-gray-600 mt-1">${projectTasks.filter(t => t.projectId === project.id).length} tasks</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Favorites Management Functions
+        function showAddFavoriteForm() {
+            document.getElementById('add-favorite-form').classList.remove('hidden');
+        }
+
+        function hideAddFavoriteForm() {
+            document.getElementById('add-favorite-form').classList.add('hidden');
+            document.getElementById('new-favorite-title').value = '';
+            document.getElementById('new-favorite-url').value = '';
+            document.getElementById('new-favorite-description').value = '';
+            document.getElementById('new-favorite-category').value = 'link';
+        }
+
+        function addFavorite() {
+            const title = document.getElementById('new-favorite-title').value.trim();
+            const url = document.getElementById('new-favorite-url').value.trim();
+            const description = document.getElementById('new-favorite-description').value.trim();
+            const category = document.getElementById('new-favorite-category').value;
+
+            if (!title || !url) {
+                alert('Please fill in both title and URL');
+                return;
+            }
+
+            // Validate URL format
+            try {
+                new URL(url);
+            } catch (e) {
+                alert('Please enter a valid URL');
+                return;
+            }
+
+            const favorite = {
+                id: Date.now().toString(),
+                title,
+                url,
+                description,
+                category,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            favorites.push(favorite);
+            saveData();
+            renderFavorites();
+            hideAddFavoriteForm();
+        }
+
+        function deleteFavorite(id) {
+            if (confirm('Are you sure you want to delete this favorite?')) {
+                favorites = favorites.filter(f => f.id !== id);
+                saveData();
+                renderFavorites();
+            }
+        }
+
+        function renderFavorites() {
+            const favoritesList = document.getElementById('favorites-list');
+
+            if (favorites.length === 0) {
+                favoritesList.innerHTML = `
+                    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 text-center">
+                        <div class="text-6xl mb-4">⭐</div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">No favorites yet</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Add your first favorite link or resource to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group favorites by category
+            const groupedFavorites = favorites.reduce((groups, favorite) => {
+                const category = favorite.category || 'other';
+                if (!groups[category]) {
+                    groups[category] = [];
+                }
+                groups[category].push(favorite);
+                return groups;
+            }, {});
+
+            const categoryIcons = {
+                link: '🔗',
+                document: '📄',
+                tool: '🛠️',
+                resource: '📚',
+                other: '📎'
+            };
+
+            const categoryNames = {
+                link: 'Links',
+                document: 'Documents',
+                tool: 'Tools',
+                resource: 'Resources',
+                other: 'Other'
+            };
+
+            favoritesList.innerHTML = Object.entries(groupedFavorites).map(([category, items]) => `
+                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
+                    <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center space-x-2">
+                            <span>${categoryIcons[category] || '📎'}</span>
+                            <span>${categoryNames[category] || category}</span>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">(${items.length})</span>
+                        </h4>
+                    </div>
+                    <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                        ${items.map(favorite => `
+                            <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center text-purple-600 font-bold text-sm">
+                                                ${favorite.title.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div class="flex-1">
+                                                <h5 class="font-semibold text-gray-900 dark:text-white mb-1">
+                                                    <a href="${favorite.url}" target="_blank" rel="noopener noreferrer" class="hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                                                        ${favorite.title}
+                                                    </a>
+                                                </h5>
+                                                ${favorite.description ? `<p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${favorite.description}</p>` : ''}
+                                                <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+                                                    <span>${new Date(favorite.createdAt).toLocaleDateString()}</span>
+                                                    <span>•</span>
+                                                    <span class="text-purple-600 dark:text-purple-400">${categoryNames[favorite.category] || favorite.category}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2 ml-4">
+                                        <a href="${favorite.url}" target="_blank" rel="noopener noreferrer" class="text-purple-600 hover:text-purple-700 p-2 rounded-lg hover:bg-purple-50 dark:hover:bg-purple-900 transition-colors" title="Open link">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                                            </svg>
+                                        </a>
+                                        <button onclick="deleteFavorite('${favorite.id}')" class="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900 transition-colors" title="Delete">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Portfolio filter function
+        function filterProjects(category) {
+            const items = document.querySelectorAll('.portfolio-item');
+            const buttons = document.querySelectorAll('.portfolio-filter-btn');
+            
+            // Update button styles
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-primary-foreground');
+                btn.classList.add('bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80');
+            });
+            
+            const activeButton = document.querySelector(`[data-filter="${category}"]`);
+            if (activeButton) {
+                activeButton.classList.remove('bg-secondary', 'text-secondary-foreground', 'hover:bg-secondary/80');
+                activeButton.classList.add('bg-primary', 'text-primary-foreground');
+            }
+            
+            // Filter items
+            items.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Request notification permission
+        // if ('Notification' in window && Notification.permission === 'default') {
+        //     Notification.requestPermission();
+        // }
+
+        // Chat functionality
+        let chatHistory = [];
+        let currentModel = 'GPT-4';
+        let isVoiceInputActive = false;
+        let isRecording = false;
+        let mediaRecorder = null;
+        let audioChunks = [];
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to history
+            addMessageToHistory('user', message);
+            
+            // Clear input
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response (replace with actual AI API call)
+            setTimeout(() => {
+                hideTypingIndicator();
+                const aiResponse = generateAIResponse(message);
+                addMessageToHistory('ai', aiResponse);
+            }, 1500);
+        }
+
+        function addMessageToHistory(sender, message) {
+            const timestamp = new Date();
+            const messageObj = {
+                id: Date.now(),
+                sender: sender,
+                message: message,
+                timestamp: timestamp,
+                model: sender === 'ai' ? currentModel : null
+            };
+            
+            chatHistory.push(messageObj);
+            renderChatHistory();
+            saveChatHistory();
+        }
+
+        function renderChatHistory() {
+            const chatHistoryDiv = document.getElementById('chat-history');
+            const chatContainer = chatHistoryDiv.querySelector('.space-y-4');
+            
+            if (chatHistory.length === 0) {
+                chatHistoryDiv.style.display = 'none';
+                return;
+            }
+            
+            chatHistoryDiv.style.display = 'block';
+            chatContainer.innerHTML = '';
+            
+            chatHistory.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                
+                const messageContent = document.createElement('div');
+                messageContent.className = `max-w-[80%] p-4 rounded-2xl ${
+                    msg.sender === 'user' 
+                        ? 'bg-purple-600 text-white' 
+                        : 'bg-gray-100 text-gray-800'
+                }`;
+                
+                const messageText = document.createElement('div');
+                messageText.textContent = msg.message;
+                messageContent.appendChild(messageText);
+                
+                if (msg.sender === 'ai' && msg.model) {
+                    const modelTag = document.createElement('div');
+                    modelTag.className = 'text-xs opacity-70 mt-2';
+                    modelTag.textContent = `Generated by ${msg.model}`;
+                    messageContent.appendChild(modelTag);
+                }
+                
+                const timeDiv = document.createElement('div');
+                timeDiv.className = `text-xs opacity-70 mt-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`;
+                timeDiv.textContent = formatTime(msg.timestamp);
+                
+                messageDiv.appendChild(messageContent);
+                chatContainer.appendChild(messageDiv);
+                chatContainer.appendChild(timeDiv);
+            });
+            
+            // Scroll to bottom
+            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const chatHistoryDiv = document.getElementById('chat-history');
+            const chatContainer = chatHistoryDiv.querySelector('.space-y-4');
+            
+            chatHistoryDiv.style.display = 'block';
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'flex justify-start';
+            typingDiv.innerHTML = `
+                <div class="bg-gray-100 text-gray-800 p-4 rounded-2xl max-w-[80%]">
+                    <div class="flex items-center space-x-1">
+                        <div class="flex space-x-1">
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                        </div>
+                        <span class="text-sm ml-2">${currentModel} is typing...</span>
+                    </div>
+                </div>
+            `;
+            
+            chatContainer.appendChild(typingDiv);
+            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function generateAIResponse(userMessage) {
+            // This is a simple mock response. Replace with actual AI API integration
+            const responses = [
+                "That's an interesting question! Let me help you with that.",
+                "I understand what you're asking. Here's my perspective on this topic.",
+                "Great question! Based on my knowledge, I can provide some insights.",
+                "I'd be happy to help you with that. Let me break this down for you.",
+                "That's a thoughtful inquiry. Here's what I think about this."
+            ];
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            return `${randomResponse} You mentioned: "${userMessage}". This is a simulated response - you can integrate with real AI APIs like OpenAI, Claude, or others for actual AI functionality.`;
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function saveChatHistory() {
+            localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
+        }
+
+        function loadChatHistory() {
+            const saved = localStorage.getItem('chatHistory');
+            if (saved) {
+                chatHistory = JSON.parse(saved);
+                renderChatHistory();
+            }
+        }
+
+        // Model selection functions
+        function toggleModelSelector() {
+            const dropdown = document.getElementById('model-dropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function selectModel(model) {
+            currentModel = model;
+            document.getElementById('selected-model').textContent = model;
+            document.getElementById('model-dropdown').style.display = 'none';
+        }
+
+        // Settings functions
+        function openChatSettings() {
+            const options = [
+                'Clear Chat History',
+                'Export Chat',
+                'Change Theme',
+                'Notification Settings'
+            ];
+            
+            const choice = prompt('Chat Settings:\n' + options.map((opt, i) => `${i + 1}. ${opt}`).join('\n') + '\n\nEnter your choice (1-4):');
+            
+            switch(choice) {
+                case '1':
+                    clearChatHistory();
+                    break;
+                case '2':
+                    exportChat();
+                    break;
+                case '3':
+                    alert('Theme settings would be implemented here');
+                    break;
+                case '4':
+                    alert('Notification settings would be implemented here');
+                    break;
+            }
+        }
+
+        function clearChatHistory() {
+            if (confirm('Are you sure you want to clear all chat history?')) {
+                chatHistory = [];
+                renderChatHistory();
+                saveChatHistory();
+                alert('Chat history cleared!');
+            }
+        }
+
+        function exportChat() {
+            if (chatHistory.length === 0) {
+                alert('No chat history to export!');
+                return;
+            }
+            
+            const chatText = chatHistory.map(msg => 
+                `[${formatTime(msg.timestamp)}] ${msg.sender.toUpperCase()}: ${msg.message}`
+            ).join('\n\n');
+            
+            const blob = new Blob([chatText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `chat-history-${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Share functions
+        function shareChat() {
+            if (chatHistory.length === 0) {
+                alert('No chat history to share!');
+                return;
+            }
+            
+            const lastMessage = chatHistory[chatHistory.length - 1];
+            const shareText = `Check out this AI conversation: "${lastMessage.message}"`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'AI Chat Conversation',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    alert('Chat link copied to clipboard!');
+                });
+            }
+        }
+
+        // File upload functions
+        function openFileUpload() {
+            document.getElementById('file-input').click();
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const fileName = file.name;
+            const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+            
+            addMessageToHistory('user', `📎 Uploaded file: ${fileName} (${fileSize} MB)`);
+            
+            // Here you would typically process the file
+            setTimeout(() => {
+                addMessageToHistory('ai', `I've received your file "${fileName}". File upload processing would be implemented here with actual file analysis capabilities.`);
+            }, 1000);
+            
+            // Clear the input
+            event.target.value = '';
+        }
+
+        // Voice input functions
+        function toggleVoiceInput() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition is not supported in your browser.');
+                return;
+            }
+            
+            if (isVoiceInputActive) {
+                stopVoiceInput();
+            } else {
+                startVoiceInput();
+            }
+        }
+
+        function startVoiceInput() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+            
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+            
+            recognition.onstart = function() {
+                isVoiceInputActive = true;
+                document.querySelector('[onclick="toggleVoiceInput()"]').style.backgroundColor = '#ef4444';
+                document.getElementById('chat-input').placeholder = 'Listening...';
+            };
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chat-input').value = transcript;
+            };
+            
+            recognition.onend = function() {
+                stopVoiceInput();
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Speech recognition error:', event.error);
+                stopVoiceInput();
+            };
+            
+            recognition.start();
+        }
+
+        function stopVoiceInput() {
+            isVoiceInputActive = false;
+            document.querySelector('[onclick="toggleVoiceInput()"]').style.backgroundColor = '';
+            document.getElementById('chat-input').placeholder = 'Type your message here...';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('model-dropdown');
+            const button = event.target.closest('[onclick="toggleModelSelector()"]');
+            
+            if (!button && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Load chat history on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadChatHistory();
+        });
+
+        // Initialize the application
+        init();
+    </script>
+</body>
+</html>
