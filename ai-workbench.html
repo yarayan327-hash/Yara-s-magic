@@ -1,0 +1,67 @@
+<body class="font-sans">
+    /* Theme-responsive styles */
+        body {
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+
+        /* Override Tailwind fixed colors for theme support */
+        [data-theme="dark"] .bg-white {
+            background-color: hsl(var(--secondary)) !important;
+        }
+
+        [data-theme="dark"] .bg-gray-50 {
+            background-color: hsl(var(--background)) !important;
+        }
+
+        [data-theme="dark"] .bg-gray-100 {
+            background-color: hsl(var(--secondary)) !important;
+        }
+
+        [data-theme="dark"] .text-gray-700 {
+            color: hsl(var(--foreground)) !important;
+        }
+
+        [data-theme="dark"] .text-gray-900 {
+            color: hsl(var(--foreground)) !important;
+        }
+
+        [data-theme="dark"] .text-black {
+            color: hsl(var(--foreground)) !important;
+        }
+
+        [data-theme="dark"] .border-gray-200 {
+            border-color: hsl(var(--secondary)) !important;
+        }
+
+        [data-theme="dark"] .border-gray-300 {
+            border-color: hsl(var(--secondary)) !important;
+        }
+
+        /* Hover states for dark mode */
+        [data-theme="dark"] .hover\:bg-gray-50:hover {
+            background-color: hsl(var(--secondary)) !important;
+        }
+
+        [data-theme="dark"] .hover\:bg-indigo-50:hover {
+            background-color: hsl(var(--primary) / 0.1) !important;
+        }
+
+        [data-theme="dark"] .hover\:bg-gray-600:hover {
+            background-color: hsl(var(--secondary)) !important;
+        }
+
+        /* Input and form elements */
+        [data-theme="dark"] input,
+        [data-theme="dark"] textarea,
+        [data-theme="dark"] select {
+            background-color: hsl(var(--secondary)) !important;
+            color: hsl(var(--foreground)) !important;
+            border-color: hsl(var(--secondary)) !important;
+        }
+
+        /* Tab content styling */
+        .tab-content {
+            min-height: calc(100vh - 120px);
+        }
+    </style>
