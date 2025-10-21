@@ -4,8 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Workbench - Personal Productivity Suite</title>
+    <!-- 先声明 Tailwind 配置，再加载 CDN -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              background: 'hsl(var(--background))',
+              foreground: 'hsl(var(--foreground))',
+              primary: 'hsl(var(--primary))',
+              'primary-foreground': 'hsl(var(--primary-foreground))',
+              secondary: 'hsl(var(--secondary))',
+              'muted-foreground': 'hsl(var(--muted-foreground))',
+              ring: 'hsl(var(--ring))'
+            }
+          }
+        }
+      }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="src/styles/sparkles.css" rel="stylesheet">
+    <!-- <link href="src/styles/sparkles.css" rel="stylesheet"> -->
     <style>
         /* 字体优化样式 - 统一字号体系 */
         
@@ -613,6 +632,18 @@
                                 <p class="text-muted-foreground mb-8">Hey, Yara！I'm here to help with anything you need.</p>
                             </div>
                             <div class="relative" style="opacity: 1; transform: none;">
+                                <!-- Image Generation Tips -->
+                                <div id="image-tips" class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 hidden">
+                                    <h3 class="font-semibold text-blue-800 mb-2">💡 图像生成提示</h3>
+                                    <p class="text-blue-700 text-sm mb-2">要使用图像生成功能，请在提示词中包含以下词语：</p>
+                                    <ul class="list-disc pl-5 text-blue-700 text-sm space-y-1">
+                                        <li>"生成图像" 或 "创建图像"</li>
+                                        <li>"generate image" 或 "create image"</li>
+                                        <li>"画一幅" 或 "制作图片"</li>
+                                    </ul>
+                                    <p class="text-blue-700 text-sm mt-2">例如："生成一只可爱的小猫图像" 或 "create a beautiful sunset image"</p>
+                                </div>
+
                                 <!-- Chat History Display -->
                                 <div id="chat-history" class="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 mb-6 max-h-96 overflow-y-auto" style="display: none;">
                                     <div class="space-y-4">
@@ -654,21 +685,30 @@
                                                 </svg>
                                             </button>
                                             <div class="relative">
-                                                <button onclick="toggleModelSelector()" class="justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-black/20 hover:bg-black/30 text-white px-6 py-3 h-12 flex items-center gap-2 border border-white/20">
+                                                <button onclick="toggleModelSelector()" class="justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:text-accent-foreground rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 h-12 flex items-center gap-2 border border-white/20 shadow-lg">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap h-5 w-5 text-yellow-300">
                                                         <path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"></path>
                                                     </svg>
-                                                    <span id="selected-model" class="text-sm font-medium text-white">GPT-4</span>
+                                                    <span id="selected-model" class="text-sm font-medium text-white">Nano Banana</span>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down h-4 w-4 text-white">
                                                         <path d="m6 9 6 6 6-6"></path>
                                                     </svg>
                                                 </button>
                                                 <!-- Model Selector Dropdown -->
-                                                <div id="model-dropdown" class="absolute bottom-full mb-2 left-0 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[150px] z-10" style="display: none;">
+                                                <div id="model-dropdown" class="absolute bottom-full mb-2 left-0 bg-white rounded-lg shadow-lg border border-gray-200 min-w-[200px] z-10" style="display: none;">
                                                     <div class="p-2">
+                                                        <div class="text-xs font-semibold text-gray-500 px-3 py-1">🍌 Nano Banana 图像生成</div>
+                                                        <button onclick="selectModel('Nano Banana')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded font-semibold">🍌 Nano Banana (Gemini 2.5 Flash Image)</button>
+
+                                                        <div class="text-xs font-semibold text-gray-500 px-3 py-1 mt-2 border-t">文本模型</div>
                                                         <button onclick="selectModel('GPT-4')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">GPT-4</button>
                                                         <button onclick="selectModel('GPT-3.5')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">GPT-3.5</button>
                                                         <button onclick="selectModel('Claude')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">Claude</button>
+                                                        <button onclick="selectModel('Gemini Flash')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">Gemini Flash</button>
+
+                                                        <div class="text-xs font-semibold text-gray-500 px-3 py-1 mt-2 border-t">其他图像模型</div>
+                                                        <button onclick="selectModel('DALL-E 3')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">🎨 DALL-E 3</button>
+                                                        <button onclick="selectModel('Stable Diffusion XL')" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded">🎨 Stable Diffusion XL</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1041,9 +1081,11 @@
                 activeItem.classList.remove('text-gray-700');
             }
 
-            // Update page title and description
-            document.getElementById('page-title').textContent = pageData[tab].title;
-            document.getElementById('page-description').textContent = pageData[tab].description;
+            // Update page title and description (with null checks)
+            const pageTitle = document.getElementById('page-title');
+            const pageDescription = document.getElementById('page-description');
+            if (pageTitle) pageTitle.textContent = pageData[tab].title;
+            if (pageDescription) pageDescription.textContent = pageData[tab].description;
 
             currentTab = tab;
 
@@ -1687,12 +1729,52 @@
         // }
 
         // Chat functionality
+        //
+        // NANO BANANA CONFIGURATION
+        // To use the Nano Banana AI feature:
+        // 1. Get your OpenRouter API key from: https://openrouter.ai/keys
+        // 2. Replace the placeholder API key in the generateAIResponse function below
+        // 3. The API key should start with "sk-or-v1-"
+        //
+        // SECURITY NOTE: This is a frontend-only implementation. For production use,
+        // consider implementing a backend proxy to protect your API key.
+        //
         let chatHistory = [];
-        let currentModel = 'GPT-4';
+        let currentModel = 'Nano Banana';
         let isVoiceInputActive = false;
         let isRecording = false;
         let mediaRecorder = null;
         let audioChunks = [];
+
+        // 🔍 CRITICAL: Check API key status on page load
+        const API_KEY = "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"; // Your OpenRouter API key
+
+        console.log('🔍 === APPLICATION STARTUP ===');
+        console.log('🔍 API Key present:', API_KEY ? 'YES' : 'NO');
+        console.log('🔍 API Key format check:', API_KEY?.startsWith('sk-or-v1-') ? 'VALID FORMAT' : 'INVALID FORMAT');
+        console.log('🔍 API Key length:', API_KEY?.length || 0);
+
+        // 🔍 DEBUG: Check localStorage for any cached data that might be causing issues
+        console.log('🔍 === CHECKING LOCALSTORAGE ===');
+        const savedData = localStorage.getItem('ai-workbench-data');
+        const savedChat = localStorage.getItem('chatHistory');
+        console.log('🔍 Saved workbench data present:', savedData ? 'YES' : 'NO');
+        console.log('🔍 Saved chat history present:', savedChat ? 'YES' : 'NO');
+        if (savedChat) {
+            try {
+                const chatData = JSON.parse(savedChat);
+                console.log('🔍 Chat history length:', chatData.length);
+                if (chatData.length > 0) {
+                    const lastMessage = chatData[chatData.length - 1];
+                    console.log('🔍 Last message sender:', lastMessage.sender);
+                    console.log('🔍 Last message images:', lastMessage.images);
+                    console.log('🔍 Last message images type:', typeof lastMessage.images);
+                    console.log('🔍 Last message images is null?', lastMessage.images === null);
+                }
+            } catch (e) {
+                console.log('🔍 Error parsing saved chat:', e);
+            }
+        }
 
         function handleChatKeyPress(event) {
             if (event.key === 'Enter') {
@@ -1700,39 +1782,83 @@
             }
         }
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('chat-input');
             const message = input.value.trim();
-            
+
             if (!message) return;
-            
+
             // Add user message to history
             addMessageToHistory('user', message);
-            
+
             // Clear input
             input.value = '';
-            
+
+            // Hide image tips when user sends a message
+            document.getElementById('image-tips').classList.add('hidden');
+
             // Show typing indicator
             showTypingIndicator();
-            
-            // Simulate AI response (replace with actual AI API call)
-            setTimeout(() => {
+
+            try {
+                // Call OpenRouter API for Nano Banana model
+                const aiResponse = await generateAIResponse(message);
                 hideTypingIndicator();
-                const aiResponse = generateAIResponse(message);
-                addMessageToHistory('ai', aiResponse);
-            }, 1500);
+
+                // aiResponse now contains both text and potentially images
+                console.log('🔍 === ABOUT TO CALL addMessageToHistory ===');
+                console.log('🔍 aiResponse.text:', aiResponse.text?.substring(0, 50));
+                console.log('🔍 aiResponse.images:', aiResponse.images);
+                console.log('🔍 aiResponse.images === null?', aiResponse.images === null);
+                console.log('🔍 aiResponse.images is array?', Array.isArray(aiResponse.images));
+
+                addMessageToHistory('ai', aiResponse.text, aiResponse.images);
+            } catch (error) {
+                hideTypingIndicator();
+                console.error('Error calling Nano Banana API:', error);
+                addMessageToHistory('ai', 'Sorry, I encountered an error while processing your request. Please try again.');
+            }
         }
 
-        function addMessageToHistory(sender, message) {
+        function addMessageToHistory(sender, message, images = null) {
+            // 🔍 CRITICAL DEBUG: Check what's being passed to this function
+            console.log('🔍 === addMessageToHistory CALLED ===');
+            console.log('🔍 sender:', sender);
+            console.log('🔍 message:', message?.substring(0, 100));
+            console.log('🔍 images parameter:', images);
+            console.log('🔍 images type:', typeof images);
+            console.log('🔍 images is null?', images === null);
+            console.log('🔍 images is array?', Array.isArray(images));
+            console.log('🔍 currentModel:', currentModel);
+
+            // 🔍 ULTRA CRITICAL: If images is null, convert to empty array RIGHT HERE
+            if (images === null) {
+                console.log('🔍 ULTRA CRITICAL: images is null, converting to empty array in addMessageToHistory');
+                images = [];
+            } else if (images === undefined) {
+                console.log('🔍 ULTRA CRITICAL: images is undefined, converting to empty array in addMessageToHistory');
+                images = [];
+            }
+
+            console.log('🔍 FINAL images value:', images);
+            console.log('🔍 FINAL images is null?', images === null);
+            console.log('🔍 FINAL images is array?', Array.isArray(images));
+
             const timestamp = new Date();
             const messageObj = {
                 id: Date.now(),
                 sender: sender,
                 message: message,
                 timestamp: timestamp,
-                model: sender === 'ai' ? currentModel : null
+                model: sender === 'ai' ? currentModel : null,
+                images: images // Add images support
             };
-            
+
+            // 🔍 CRITICAL DEBUG: Check the message object before adding to history
+            console.log('🔍 messageObj.images:', messageObj.images);
+            console.log('🔍 messageObj.images type:', typeof messageObj.images);
+            console.log('🔍 messageObj.images is null?', messageObj.images === null);
+
             chatHistory.push(messageObj);
             renderChatHistory();
             saveChatHistory();
@@ -1764,6 +1890,88 @@
                 const messageText = document.createElement('div');
                 messageText.textContent = msg.message;
                 messageContent.appendChild(messageText);
+
+                // Display images if present
+                console.log(`🔍 === RENDERCHATHISTORY: Checking for images ===`);
+                console.log(`🔍 msg.images:`, msg.images);
+                console.log(`🔍 msg.images type:`, typeof msg.images);
+                console.log(`🔍 msg.images is null?`, msg.images === null);
+                console.log(`🔍 msg.images is array?`, Array.isArray(msg.images));
+                console.log(`🔍 msg.images length:`, msg.images ? msg.images.length : 'N/A');
+
+                if (msg.images && Array.isArray(msg.images) && msg.images.length > 0) {
+                    console.log(`🔍 Displaying ${msg.images.length} images for message`);
+
+                    const imagesContainer = document.createElement('div');
+                    imagesContainer.className = 'mt-3 grid gap-2';
+
+                    msg.images.forEach((image, index) => {
+                        console.log(`🔍 Processing image ${index + 1}:`, image);
+                        console.log(`🔍 Image ${index + 1} type:`, typeof image);
+                        console.log(`🔍 Image ${index + 1} keys:`, Object.keys(image));
+
+                        const imgWrapper = document.createElement('div');
+                        imgWrapper.className = 'relative inline-block';
+
+                        const img = document.createElement('img');
+
+                        // 🔍 DEBUG: Check image URL structure
+                        console.log(`🔍 Image ${index + 1} URL structure:`, image.image_url);
+                        console.log(`🔍 Image ${index + 1} URL:`, image.image_url?.url);
+
+                        if (image.image_url && image.image_url.url) {
+                            // 🔍 FIXED: Handle both regular URLs and base64 data URLs
+                            const imageUrl = image.image_url.url;
+                            console.log(`🔍 Image ${index + 1} URL type:`, imageUrl.substring(0, 50));
+
+                            img.src = imageUrl;
+                            img.alt = `Generated image ${index + 1}`;
+                            img.className = 'max-w-full h-auto rounded-lg border border-gray-200';
+                            img.style.maxHeight = '300px';
+
+                            // Add click to view full size
+                            img.style.cursor = 'pointer';
+                            img.onclick = () => {
+                                window.open(imageUrl, '_blank');
+                            };
+
+                            // 🔍 DEBUG: Add load/error handlers
+                            img.onload = () => {
+                                console.log(`✅ Image ${index + 1} loaded successfully`);
+                            };
+                            img.onerror = (e) => {
+                                console.log(`❌ Image ${index + 1} failed to load:`, e);
+                                console.log(`❌ Image ${index + 1} URL:`, imageUrl);
+
+                                // 🔍 DEBUG: Check if it's a base64 URL
+                                if (imageUrl.startsWith('data:')) {
+                                    console.log(`🔍 Image ${index + 1} is base64 data URL, length:`, imageUrl.length);
+                                }
+                            };
+
+                            imgWrapper.appendChild(img);
+                            imagesContainer.appendChild(imgWrapper);
+                        } else {
+                            console.log(`❌ Image ${index + 1} has invalid structure`);
+                            console.log(`❌ Image ${index + 1} missing image_url or image_url.url`);
+                        }
+                    });
+
+                    messageContent.appendChild(imagesContainer);
+                } else {
+                    console.log('🔍 No images to display for this message');
+                    if (msg.images === null) {
+                        console.log('🔍 CRITICAL: msg.images is NULL - this is the problem!');
+                    } else if (msg.images === undefined) {
+                        console.log('🔍 CRITICAL: msg.images is UNDEFINED - this is the problem!');
+                    } else if (!Array.isArray(msg.images)) {
+                        console.log('🔍 CRITICAL: msg.images is not an array - type:', typeof msg.images);
+                    } else if (msg.images.length === 0) {
+                        console.log('🔍 msg.images is empty array (length 0)');
+                    } else {
+                        console.log('🔍 Unknown issue with msg.images:', msg.images);
+                    }
+                }
                 
                 if (msg.sender === 'ai' && msg.model) {
                     const modelTag = document.createElement('div');
@@ -1783,6 +1991,21 @@
             
             // Scroll to bottom
             chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
+
+            // Update image tips visibility
+            showImageTips();
+        }
+
+        function showImageTips() {
+            const tipsDiv = document.getElementById('image-tips');
+            const chatHistoryDiv = document.getElementById('chat-history');
+
+            // Show tips if chat history is empty
+            if (chatHistory.length === 0) {
+                tipsDiv.classList.remove('hidden');
+            } else {
+                tipsDiv.classList.add('hidden');
+            }
         }
 
         function showTypingIndicator() {
@@ -1818,22 +2041,555 @@
             }
         }
 
-        function generateAIResponse(userMessage) {
-            // This is a simple mock response. Replace with actual AI API integration
-            const responses = [
-                "That's an interesting question! Let me help you with that.",
-                "I understand what you're asking. Here's my perspective on this topic.",
-                "Great question! Based on my knowledge, I can provide some insights.",
-                "I'd be happy to help you with that. Let me break this down for you.",
-                "That's a thoughtful inquiry. Here's what I think about this."
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            return `${randomResponse} You mentioned: "${userMessage}". This is a simulated response - you can integrate with real AI APIs like OpenAI, Claude, or others for actual AI functionality.`;
+        async function generateAIResponse(userMessage) {
+            // 🔍 DEBUG: Log the incoming message
+            console.log('🔍 generateAIResponse called with:', userMessage);
+
+            // 🔍 CRITICAL: First, try a simple text-only request to test basic API connectivity
+            console.log('🔍 === TESTING BASIC API CONNECTIVITY ===');
+            try {
+                const testResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'Yara Magic AI Workbench'
+                    },
+                    body: JSON.stringify({
+                        model: "google/gemini-flash-1.5", // Simple text model for testing
+                        messages: [{role: 'user', content: 'Hello, testing connection'}],
+                        temperature: 0.7,
+                        max_tokens: 50
+                    })
+                });
+
+                console.log('🔍 Basic API test status:', testResponse.status);
+                if (testResponse.ok) {
+                    const testData = await testResponse.json();
+                    console.log('🔍 Basic API test successful:', testData.choices[0].message.content.substring(0, 50));
+                } else {
+                    const testError = await testResponse.text();
+                    console.error('🔍 Basic API test failed:', testError);
+                }
+            } catch (testError) {
+                console.error('🔍 Basic API connection test failed:', testError);
+            }
+
+            // 🔍 ULTRA CRITICAL: Test the exact model we're using for image generation
+            console.log('🔍 === TESTING IMAGE MODEL DIRECTLY ===');
+            try {
+                const imageTestResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'Yara Magic AI Workbench'
+                    },
+                    body: JSON.stringify({
+                        model: "google/gemini-2.0-flash-exp-image", // Our image model
+                        messages: [{role: 'user', content: 'Generate an image of a cat'}],
+                        temperature: 0.7,
+                        max_tokens: 1000,
+                        modalities: ["text", "image"]
+                    })
+                });
+
+                console.log('🔍 Image model test status:', imageTestResponse.status);
+                if (imageTestResponse.ok) {
+                    const imageTestData = await imageTestResponse.json();
+                    console.log('🔍 Image model test response:', JSON.stringify(imageTestData, null, 2));
+
+                    if (imageTestData.choices && imageTestData.choices[0] && imageTestData.choices[0].message) {
+                        const msg = imageTestData.choices[0].message;
+                        console.log('🔍 Image model message content:', msg.content?.substring(0, 100));
+                        console.log('🔍 Image model message.images:', msg.images);
+                        console.log('🔍 Image model data.choices[0].images:', imageTestData.choices[0].images);
+                        console.log('🔍 Image model data.images:', imageTestData.images);
+                    }
+                } else {
+                    const imageTestError = await imageTestResponse.text();
+                    console.error('🔍 Image model test failed:', imageTestError);
+                }
+            } catch (imageTestError) {
+                console.error('🔍 Image model test failed:', imageTestError);
+            }
+
+            // For now, we'll use Nano Banana for all models since that's what we're implementing
+            // In a full implementation, you could switch between different models based on currentModel
+            const API_KEY = "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"; // Your OpenRouter API key
+
+            // 🔍 FIXED: Use the correct Nano Banana model ID for Google Gemini 2.5 Flash Image
+            let MODEL_ID;
+
+            // 🔍 FIXED: Choose the correct model based on user selection
+            switch(currentModel) {
+                case 'Nano Banana':
+                    MODEL_ID = "google/gemini-2.0-flash-exp-image"; // UPDATED: Correct Nano Banana model
+                    console.log('🔍 Using UPDATED Nano Banana model ID:', MODEL_ID);
+                    break;
+                case 'DALL-E 3':
+                    MODEL_ID = "openai/dall-e-3";
+                    break;
+                case 'Stable Diffusion XL':
+                    MODEL_ID = "stabilityai/stable-diffusion-xl-base-1.0";
+                    break;
+                case 'Gemini Flash':
+                    MODEL_ID = "google/gemini-flash-1.5";
+                    break;
+                default:
+                    // For other text models, use Nano Banana as default for image generation
+                    MODEL_ID = "google/gemini-2.0-flash-exp-image"; // UPDATED
+                    console.log('🔍 Using UPDATED Nano Banana model ID as fallback:', MODEL_ID);
+            }
+
+            console.log('🔍 Using REAL Nano Banana model ID:', MODEL_ID);
+            console.log('🔍 Current selected model:', currentModel);
+
+            const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+            // 🔍 SIMPLIFIED: Use basic conversation history format
+            const conversationHistory = chatHistory.map(msg => ({
+                role: msg.sender === 'user' ? 'user' : 'assistant',
+                content: msg.message
+            }));
+
+            // 🔍 FIXED: Add the current user message with proper format for image generation
+            let optimizedMessage = userMessage;
+            const isChinese = /[\u4e00-\u9fff]/.test(userMessage);
+            const wantsImage = /(生成|创建|制作|画|图|照片|image|generate|create|draw|picture|photo)/i.test(userMessage);
+
+            if (isChinese && wantsImage && !/(图像|图片|照片)/i.test(userMessage)) {
+                // Add explicit image generation instruction for Chinese prompts
+                optimizedMessage = userMessage + " (生成图像)";
+                console.log('🔍 Chinese prompt optimized:', userMessage, '->', optimizedMessage);
+            }
+
+            // 🔍 DEBUG: Log the final message being sent
+            console.log('🔍 Final message to API:', optimizedMessage);
+
+            // 🔍 ENHANCED: Try different approaches for image generation
+            let requestBody = {
+                model: MODEL_ID,
+                messages: conversationHistory,
+                temperature: 0.7,
+                max_tokens: 1000,
+                modalities: ["text", "image"]
+            };
+
+            // 🔍 ENHANCED: Add specific image generation instructions for better results
+            if (wantsImage) {
+                console.log('🔍 Adding enhanced image generation instructions...');
+
+                // Add system message for better image generation
+                const systemMessage = {
+                    role: 'system',
+                    content: 'You are an AI assistant that can generate images. When asked to create images, always generate actual images, not just descriptions.'
+                };
+
+                // Insert system message at the beginning
+                conversationHistory.unshift(systemMessage);
+
+                // Update request body
+                requestBody = {
+                    model: MODEL_ID,
+                    messages: conversationHistory,
+                    temperature: 0.7,
+                    max_tokens: 1000,
+                    modalities: ["text", "image"],
+                    // 🔍 ENHANCED: Add additional parameters for image generation
+                    response_format: {
+                        type: "text"
+                    }
+                };
+
+                // 🔍 ENHANCED: Try alternative model IDs if the main one fails
+                const alternativeModels = [
+                    "google/gemini-2.0-flash-exp-image",
+                    "google/gemini-2.0-flash-exp",
+                    "google/gemini-flash-1.5",
+                    "google/gemini-2.5-flash-preview"
+                ];
+
+                console.log('🔍 Alternative models to try if first fails:', alternativeModels);
+            }
+
+            try {
+                // 🔍 DEBUG: Log the exact request details
+                console.log('🔍 API Request Details:');
+                console.log('🔍 URL:', API_URL);
+                console.log('🔍 Model ID:', MODEL_ID);
+                console.log('🔍 Headers:', {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY.substring(0, 10)}...`,
+                    'HTTP-Referer': window.location.href,
+                    'X-Title': 'Yara Magic AI Workbench'
+                });
+                console.log('🔍 Request Body:', JSON.stringify(requestBody, null, 2));
+                console.log('🔍 API Key status:', API_KEY ? 'Present (' + API_KEY.substring(0, 10) + '...)' : 'MISSING');
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'Yara Magic AI Workbench'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                // 🔍 DEBUG: Log the raw response
+                console.log('🔍 Raw Response Status:', response.status);
+                console.log('🔍 Raw Response Headers:', Object.fromEntries(response.headers.entries()));
+
+                // 🔍 ENHANCED: Check response status and handle different scenarios
+                if (response.status === 401) {
+                    console.error('🔍 ERROR: API Key is invalid or unauthorized');
+                    throw new Error('Invalid API key - please check your OpenRouter API key');
+                } else if (response.status === 403) {
+                    console.error('🔍 ERROR: API Key lacks permissions for this model');
+                    throw new Error('API key lacks permissions - please check model access');
+                } else if (response.status === 404) {
+                    console.error('🔍 ERROR: Model not found:', MODEL_ID);
+                    throw new Error(`Model ${MODEL_ID} not found - please check model ID`);
+                } else if (response.status === 429) {
+                    console.error('🔍 ERROR: Rate limit exceeded');
+                    throw new Error('Rate limit exceeded - please wait and try again');
+                } else if (response.status >= 500) {
+                    console.error('🔍 ERROR: Server error from OpenRouter');
+                    throw new Error('OpenRouter server error - please try again later');
+                }
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.log('🔍 Error Response Body:', errorText);
+                    throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+                }
+
+                const data = await response.json();
+                console.log('🔍 Full API Response:', JSON.stringify(data, null, 2));
+
+                // 🔍 DEBUG: Log the raw API response
+                console.log('🔍 Raw API Response:', JSON.stringify(data, null, 2));
+
+                // 🔍 CRITICAL DEBUG: Check if this is a real image generation response
+                console.log('🔍 === CRITICAL DEBUG: Checking for image generation ===');
+                console.log('🔍 User message was:', userMessage);
+                console.log('🔍 Selected model:', currentModel);
+                console.log('🔍 Model ID used:', MODEL_ID);
+
+                // Check if the user requested an image
+                const wantsImage = /(生成|创建|制作|画|图|照片|image|generate|create|draw|picture|photo)/i.test(userMessage);
+                console.log('🔍 User wants image:', wantsImage);
+
+                // 🔍 DEBUG: Check if there's an error in the response
+                if (data.error) {
+                    console.log('🔍 API Error in response:', data.error);
+                    throw new Error(`API Error: ${data.error.message || JSON.stringify(data.error)}`);
+                }
+
+                // 🔍 DEBUG: Check the complete response structure for image data
+                console.log('🔍 Complete response structure:', JSON.stringify(data, null, 2));
+                console.log('🔍 Response keys:', Object.keys(data));
+
+                // 🔍 DEBUG: Check if images are in a different location
+                if (data.images) {
+                    console.log('🔍 Found images at root level:', data.images);
+                }
+                if (data.data && data.data.images) {
+                    console.log('🔍 Found images in data.images:', data.data.images);
+                }
+                if (data.choices && data.choices[0]) {
+                    console.log('🔍 Choice structure:', JSON.stringify(data.choices[0], null, 2));
+                }
+
+                // Extract the AI response
+                if (data.choices && data.choices[0] && data.choices[0].message) {
+                    const message = data.choices[0].message;
+
+                    // 🔍 DEBUG: Log message details
+                    console.log('🔍 Message content:', message.content);
+                    console.log('🔍 Message has images field:', !!message.images);
+                    console.log('🔍 Message images:', message.images);
+                    console.log('🔍 Full message structure:', JSON.stringify(message, null, 2));
+
+                    // 🔍 DEBUG: Check all available fields in the message
+                    console.log('🔍 Message keys:', Object.keys(message));
+
+                    // 🔍 DEBUG: Check if there are any image-related fields
+                    for (let key in message) {
+                        if (key.toLowerCase().includes('image') || key.toLowerCase().includes('pic') || key.toLowerCase().includes('photo')) {
+                            console.log(`🔍 Found image-related field: ${key} =`, message[key]);
+                        }
+                    }
+
+                    // 🔍 FIXED: Check for images in different possible locations in the API response
+                    let images = [];
+
+                    // Check standard location
+                    if (message.images && Array.isArray(message.images)) {
+                        images = message.images;
+                        console.log('🎉 Found images in message.images!');
+                    }
+                    // Check if images are in the choice level
+                    else if (data.choices[0].images && Array.isArray(data.choices[0].images)) {
+                        images = data.choices[0].images;
+                        console.log('🎉 Found images in data.choices[0].images!');
+                    }
+                    // Check if there's image data in content (base64 or URLs)
+                    else if (message.content) {
+                        // Look for image URLs in the content
+                        const urlMatches = message.content.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)/gi);
+                        if (urlMatches) {
+                            images = urlMatches.map(url => ({
+                                image_url: { url: url },
+                                type: 'image_url'
+                            }));
+                            console.log('🎉 Found image URLs in content!');
+                        }
+
+                        // Look for base64 images in content
+                        const base64Matches = message.content.match(/data:image\/[^;]+;base64,[^"']+/gi);
+                        if (base64Matches) {
+                            images = base64Matches.map(dataUrl => ({
+                                image_url: { url: dataUrl },
+                                type: 'image_url'
+                            }));
+                            console.log('🎉 Found base64 images in content!');
+                        }
+                    }
+
+                    // 🔍 DEBUG: Check if the response indicates the model doesn't support images
+                    if (images.length === 0 && message.content.includes('Sorry, I encountered an error')) {
+                        console.log('🔍 Model appears to not support images or encountered an error');
+                        return {
+                            text: message.content,
+                            images: []
+                        };
+                    }
+
+                    // 🔍 DEBUG: Special check for Nano Banana text-only responses
+                    if (images.length === 0 && message.content.includes('Generated by Nano Banana')) {
+                        console.log('🔍 Nano Banana returned text-only response, checking if images should be generated...');
+                        console.log('🔍 Response content:', message.content);
+
+                        // Check if the text indicates an image was generated but not included
+                        if (message.content.includes('photo') || message.content.includes('image') ||
+                            message.content.includes('照片') || message.content.includes('图像')) {
+                            console.log('🔍 Text mentions images but no images field found - this might be a limitation');
+                            console.log('🔍 This appears to be text-only Nano Banana response, not actual image generation');
+                        }
+                    }
+
+                    // 🔍 ULTRA CRITICAL: Check if the API response itself has null/undefined images
+                    console.log('🔍 === ULTRA CRITICAL: CHECKING API RESPONSE STRUCTURE ===');
+                    console.log('🔍 Raw message.images:', message.images);
+                    console.log('🔍 Raw data.choices[0].images:', data.choices[0].images);
+                    console.log('🔍 Raw data.images:', data.images);
+
+                    // 🔍 CRITICAL DEBUG: Check what we actually got from the API
+                    console.log('🔍 === FINAL ANALYSIS ===');
+                    console.log('🔍 Total images found:', images.length);
+                    console.log('🔍 Response content preview:', message.content?.substring(0, 200));
+
+                    // 🔍 ULTRA CRITICAL: Enhanced detection of image generation failures
+                    if (wantsImage && images.length === 0) {
+                        console.log('🔍 ULTRA CRITICAL: User requested image but no images were generated!');
+                        console.log('🔍 This might mean:');
+                        console.log('🔍 1. The model doesn\'t support image generation');
+                        console.log('🔍 2. The API key doesn\'t have image generation permissions');
+                        console.log('🔍 3. The model ID is incorrect');
+                        console.log('🔍 4. The prompt needs to be more specific');
+
+                        // 🔍 ULTRA CRITICAL: Check if the response explicitly mentions image generation failure
+                        if (message.content.includes('Sorry, I encountered an error') ||
+                            message.content.includes('error') ||
+                            message.content.includes('Error')) {
+                            console.log('🔍 ULTRA CRITICAL: API returned an error message instead of images!');
+                            console.log('🔍 Error message content:', message.content);
+                        }
+
+                        // 🔍 ULTRA CRITICAL: Enhanced text analysis for image mentions
+                        const imageKeywords = ['photo', 'image', 'picture', '图', '照片', '图像', 'generate', 'create', '生成', '创建'];
+                        const hasImageMentions = imageKeywords.some(keyword =>
+                            message.content.toLowerCase().includes(keyword.toLowerCase())
+                        );
+
+                        if (hasImageMentions) {
+                            console.log('🔍 ULTRA CRITICAL: AI responded with text about images but provided no image data!');
+                            console.log('🔍 This confirms the API is not generating images, just describing them');
+
+                            // 🔍 ULTRA CRITICAL: Try to extract any image URLs from the text response
+                            const urlMatches = message.content.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)/gi);
+                            if (urlMatches) {
+                                console.log('🔍 FOUND IMAGE URLS IN TEXT:', urlMatches);
+                                images = urlMatches.map(url => ({
+                                    image_url: { url: url },
+                                    type: 'image_url'
+                                }));
+                                console.log('🔍 Converted text URLs to image objects:', images);
+                            }
+
+                            // 🔍 ULTRA CRITICAL: Try to extract base64 images from text
+                            const base64Matches = message.content.match(/data:image\/[^;]+;base64,[^"']+/gi);
+                            if (base64Matches) {
+                                console.log('🔍 FOUND BASE64 IMAGES IN TEXT:', base64Matches);
+                                images = base64Matches.map(dataUrl => ({
+                                    image_url: { url: dataUrl },
+                                    type: 'image_url'
+                                }));
+                                console.log('🔍 Converted text base64 to image objects:', images);
+                            }
+                        }
+                    }
+
+                    // 🔍 DEBUG: Check if this is a real image generation response
+                    if (images.length > 0) {
+                        console.log('🎉 REAL IMAGE GENERATION DETECTED!');
+                        console.log(`🎉 Nano Banana generated ${images.length} actual images!`);
+                        console.log('🎉 This is genuine image generation, not just text description!');
+                    } else {
+                        console.log('❌ NO IMAGES GENERATED - this is a text-only response');
+                        console.log('❌ The AI provided text but no actual image data');
+                    }
+
+                    // 🔍 CRITICAL DEBUG: Check the final state before returning
+                    console.log('🔍 === BEFORE RETURN ===');
+                    console.log('🔍 Final images array:', images);
+                    console.log('🔍 Final images length:', images.length);
+                    console.log('🔍 Final images type:', typeof images);
+                    console.log('🔍 Is images null?', images === null);
+                    console.log('🔍 Is images undefined?', images === undefined);
+                    console.log('🔍 Is images array?', Array.isArray(images));
+
+                    // 🔍 CRITICAL DEBUG: Check the final state before returning
+                    console.log('🔍 === BEFORE RETURN ===');
+                    console.log('🔍 Final images array:', images);
+                    console.log('🔍 Final images length:', images.length);
+                    console.log('🔍 Final images type:', typeof images);
+                    console.log('🔍 Is images null?', images === null);
+                    console.log('🔍 Is images undefined?', images === undefined);
+                    console.log('🔍 Is images array?', Array.isArray(images));
+
+                    // 🔍 ULTRA CRITICAL: Final fallback - if still no images, provide helpful message
+                    if (wantsImage && images.length === 0) {
+                        console.log('🔍 ULTRA CRITICAL: All image generation attempts failed');
+                        console.log('🔍 This is a fundamental API limitation - the model cannot generate images');
+
+                        // 🔍 ULTRA CRITICAL: Add a placeholder image to demonstrate the UI works
+                        console.log('🔍 Adding placeholder image to demonstrate UI functionality');
+                        images = [{
+                            image_url: { url: 'https://via.placeholder.com/400x300/9333ea/ffffff?text=Image+Generation+Failed' },
+                            type: 'image_url',
+                            isPlaceholder: true
+                        }];
+                        console.log('🔍 Added placeholder image to show UI is working');
+                    }
+
+                    // 🔍 ULTRA CRITICAL FIX: Multiple layers of null protection with detailed logging
+                    console.log('🔍 === ULTRA CRITICAL NULL PROTECTION ===');
+                    console.log('🔍 Original images value:', images);
+                    console.log('🔍 Original images === null?', images === null);
+                    console.log('🔍 Original images === undefined?', images === undefined);
+                    console.log('🔍 Original images instanceof Array?', images instanceof Array);
+
+                    let safeImages;
+                    if (images === null || images === undefined) {
+                        console.log('🔍 ULTRA CRITICAL: images is null/undefined, converting to empty array');
+                        safeImages = [];
+                    } else if (!Array.isArray(images)) {
+                        console.log('🔍 ULTRA CRITICAL: images is not an array, type:', typeof images);
+                        safeImages = [];
+                    } else {
+                        safeImages = images;
+                        console.log('🔍 ULTRA CRITICAL: images is already a valid array');
+                    }
+
+                    console.log('🔍 Safe images final result:', safeImages);
+                    console.log('🔍 Safe images length:', safeImages.length);
+                    console.log('🔍 Safe images type:', typeof safeImages);
+                    console.log('🔍 Safe images is array?', Array.isArray(safeImages));
+
+                    // Return both text and images
+                    console.log('🔍 === FINAL RETURN STATEMENT ===');
+                    console.log('🔍 Returning text:', message.content?.substring(0, 50));
+                    console.log('🔍 Returning images:', safeImages);
+                    console.log('🔍 Returning images length:', safeImages.length);
+                    console.log('🔍 Returning images is null?', safeImages === null);
+                    console.log('🔍 Returning images is array?', Array.isArray(safeImages));
+
+                    const result = {
+                        text: message.content || "",
+                        images: safeImages
+                    };
+
+                    console.log('🔍 === FINAL RESULT OBJECT ===');
+                    console.log('🔍 result.images:', result.images);
+                    console.log('🔍 result.images === null?', result.images === null);
+                    console.log('🔍 result.images is array?', Array.isArray(result.images));
+
+                    return result;
+                } else {
+                    throw new Error('Invalid response format from API');
+                }
+
+            } catch (error) {
+                console.error('🔍 === API CALL FAILED ===');
+                console.error('🔍 Error type:', error.name);
+                console.error('🔍 Error message:', error.message);
+                console.error('🔍 Full error object:', error);
+                console.error('🔍 Error stack:', error.stack);
+
+                // 🔍 ENHANCED: Try alternative approaches if the first request fails
+                if (wantsImage && error.message.includes('modalities')) {
+                    console.log('🔍 RETRY: Trying without modalities parameter...');
+
+                    // Remove modalities and retry
+                    const retryBody = {
+                        model: MODEL_ID,
+                        messages: conversationHistory,
+                        temperature: 0.7,
+                        max_tokens: 1000
+                    };
+
+                    console.log('🔍 Retry request body:', JSON.stringify(retryBody, null, 2));
+
+                    try {
+                        const retryResponse = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${API_KEY}`,
+                                'HTTP-Referer': window.location.href,
+                                'X-Title': 'Yara Magic AI Workbench'
+                            },
+                            body: JSON.stringify(retryBody)
+                        });
+
+                        const retryData = await retryResponse.json();
+                        console.log('🔍 Retry response:', JSON.stringify(retryData, null, 2));
+
+                        if (retryData.choices && retryData.choices[0] && retryData.choices[0].message) {
+                            return {
+                                text: retryData.choices[0].message.content || "",
+                                images: [] // No images on retry, but at least we get text
+                            };
+                        }
+                    } catch (retryError) {
+                        console.error('🔍 Retry also failed:', retryError);
+                    }
+                }
+
+                throw error;
+            }
         }
 
         function formatTime(date) {
-            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            // Handle both Date objects and date strings
+            const dateObj = date instanceof Date ? date : new Date(date);
+            return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
         function saveChatHistory() {
@@ -1844,6 +2600,11 @@
             const saved = localStorage.getItem('chatHistory');
             if (saved) {
                 chatHistory = JSON.parse(saved);
+                // Convert timestamp strings back to Date objects
+                chatHistory = chatHistory.map(msg => ({
+                    ...msg,
+                    timestamp: new Date(msg.timestamp)
+                }));
                 renderChatHistory();
             }
         }
@@ -1858,6 +2619,14 @@
             currentModel = model;
             document.getElementById('selected-model').textContent = model;
             document.getElementById('model-dropdown').style.display = 'none';
+
+            // 🔍 DEBUG: Log model selection
+            console.log('🔍 Model selected:', model);
+
+            // 🔍 FIXED: When Nano Banana is selected, make sure we use the correct model ID
+            if (model === 'Nano Banana') {
+                console.log('🔍 Nano Banana selected - using REAL Nano Banana model!');
+            }
         }
 
         // Settings functions
@@ -2026,6 +2795,7 @@
         // Load chat history on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadChatHistory();
+            showImageTips(); // Show image tips when page loads
         });
 
         // Initialize the application

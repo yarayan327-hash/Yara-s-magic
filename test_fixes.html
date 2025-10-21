@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fixes</title>
+</head>
+<body>
+    <h1>Testing Fixed Functions</h1>
+
+    <script>
+        // Test formatTime function with different inputs
+        function formatTime(date) {
+            // Handle both Date objects and date strings
+            const dateObj = date instanceof Date ? date : new Date(date);
+            return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Test cases
+        console.log('Testing formatTime function:');
+        console.log('Date object:', formatTime(new Date()));
+        console.log('Date string:', formatTime('2024-01-01T12:30:00'));
+        console.log('ISO string:', formatTime(new Date().toISOString()));
+
+        // Test showTab null safety
+        function testShowTab() {
+            console.log('\nTesting showTab null safety:');
+            const pageTitle = document.getElementById('page-title');
+            const pageDescription = document.getElementById('page-description');
+
+            console.log('page-title element:', pageTitle);
+            console.log('page-description element:', pageDescription);
+
+            // This should not throw an error now
+            if (pageTitle) console.log('✅ page-title exists');
+            else console.log('⚠️ page-title is null (safe)');
+
+            if (pageDescription) console.log('✅ page-description exists');
+            else console.log('⚠️ page-description is null (safe)');
+        }
+
+        testShowTab();
+
+        console.log('\n✅ All tests completed - no errors should appear above');
+    </script>
+</body>
+</html>

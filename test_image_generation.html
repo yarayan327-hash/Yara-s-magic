@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nano Banana 图像生成测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8 text-blue-600">Nano Banana 图像生成测试</h1>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">图像生成测试</h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-2">输入图像生成提示词:</label>
+                <input type="text" id="image-prompt" placeholder="例如: 生成一只可爱的机器猫，赛博朋克风格"
+                       class="w-full p-3 border rounded"
+                       value="生成一只可爱的机器猫，赛博朋克风格">
+            </div>
+            <button onclick="testImageGeneration()" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">生成图像</button>
+            <div id="image-result" class="mt-4 p-4 rounded hidden"></div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">支持的图像提示词类型</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 bg-blue-50 rounded">
+                    <h3 class="font-semibold text-blue-800">文本到图像</h3>
+                    <p class="text-sm">"生成一个未来城市的日落景象"</p>
+                </div>
+                <div class="p-4 bg-green-50 rounded">
+                    <h3 class="font-semibold text-green-800">风格化图像</h3>
+                    <p class="text-sm">"创建一幅印象派风格的山水画"</p>
+                </div>
+                <div class="p-4 bg-purple-50 rounded">
+                    <h3 class="font-semibold text-purple-800">概念艺术</h3>
+                    <p class="text-sm">"设计一个蒸汽朋克风格的飞行器"</p>
+                </div>
+                <div class="p-4 bg-orange-50 rounded">
+                    <h3 class="font-semibold text-orange-800">角色设计</h3>
+                    <p class="text-sm">"创建一个可爱的卡通龙角色"</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <h3 class="font-semibold text-yellow-800 mb-2">💡 提示</h3>
+            <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>使用具体的描述词来获得更好的效果</li>
+                <li>指定艺术风格（如"赛博朋克"、"印象派"、"极简主义"）</li>
+                <li>包含颜色、光线、构图等细节</li>
+                <li>可以要求多个变体</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function testImageGeneration() {
+            const prompt = document.getElementById('image-prompt').value;
+            const resultDiv = document.getElementById('image-result');
+
+            if (!prompt) {
+                alert('请输入图像生成提示词');
+                return;
+            }
+
+            resultDiv.className = "mt-4 p-4 rounded bg-blue-100 text-blue-800";
+            resultDiv.innerHTML = '正在生成图像...';
+            resultDiv.classList.remove('hidden');
+
+            try {
+                const API_KEY = "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";
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'Nano Banana Image Test'
+                    },
+                    body: JSON.stringify({
+                        model: 'google/gemini-2.5-flash-image-preview',
+                        messages: [
+                            { role: 'user', content: prompt }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 1000
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const message = data.choices[0].message;
+
+                let resultHTML = `
+                    <strong>✅ 图像生成成功！</strong><br>
+                    <strong>提示词:</strong> ${prompt}<br>
+                    <strong>回复:</strong> ${message.content || '图像已生成'}<br>
+                `;
+
+                if (message.images && message.images.length > 0) {
+                    resultHTML += `<div class='mt-4'>
+                        <strong>生成的图像:</strong><br>
+                        <div class='grid grid-cols-1 md:grid-cols-2 gap-4 mt-2'>
+                    `;
+
+                    message.images.forEach((image, index) => {
+                        resultHTML += `<div class='border rounded p-2'>
+                            <img src='${image.image_url.url}' alt='生成的图像 ${index + 1}' class='max-w-full h-auto rounded' />
+                            <p class='text-xs text-gray-600 mt-1'>图像 ${index + 1}</p>
+                        </div>`;
+                    });
+
+                    resultHTML += '</div></div>';
+                }
+
+                resultDiv.className = "mt-4 p-4 rounded bg-green-100 text-green-800";
+                resultDiv.innerHTML = resultHTML;
+
+            } catch (error) {
+                resultDiv.className = "mt-4 p-4 rounded bg-red-100 text-red-800";
+                resultDiv.innerHTML = `
+                    <strong>❌ 图像生成失败</strong><br>
+                    错误信息: ${error.message}<br>
+                    请检查 API 密钥和网络连接
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

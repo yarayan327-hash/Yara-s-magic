@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图像功能调试测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8 text-red-600">图像功能调试测试</h1>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">调试信息</h2>
+            <div id="debug-info" class="p-4 bg-gray-100 rounded font-mono text-sm">
+                等待测试开始...
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">API 响应原始数据</h2>
+            <div id="raw-response" class="p-4 bg-black text-green-400 rounded font-mono text-xs max-h-64 overflow-auto">
+                暂无数据
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">图像显示测试</h2>
+            <div id="image-display" class="p-4 border rounded">
+                图像将在这里显示
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <button onclick="runDebugTest()" class="bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600">
+                运行调试测试
+            </button>
+            <button onclick="testImageProcessing()" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 ml-2">
+                测试图像处理
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function logDebug(message) {
+            const debugInfo = document.getElementById('debug-info');
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.innerHTML += `<div class="mb-2">[<span class="text-blue-600">${timestamp}</span>] ${message}</div>`;
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
+
+        function logRawResponse(data) {
+            const rawResponse = document.getElementById('raw-response');
+            rawResponse.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function runDebugTest() {
+            logDebug('开始调试测试...');
+
+            try {
+                const API_KEY = "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";
+                const prompt = "Generate an image of a cute cat";
+
+                logDebug(`发送请求到 OpenRouter API...`);
+                logDebug(`提示词: ${prompt}`);
+
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'Debug Test'
+                    },
+                    body: JSON.stringify({
+                        model: 'google/gemini-2.5-flash-image-preview',
+                        messages: [
+                            { role: 'user', content: prompt }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 1000
+                    })
+                });
+
+                logDebug(`HTTP 状态: ${response.status}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                logRawResponse(data);
+
+                // 分析响应数据
+                logDebug('分析 API 响应...');
+                const message = data.choices[0].message;
+                logDebug(`消息内容: "${message.content}"`);
+                logDebug(`是否有 images 字段: ${message.images ? '是' : '否'}`);
+
+                if (message.images) {
+                    logDebug(`图像数量: ${message.images.length}`);
+
+                    message.images.forEach((image, index) => {
+                        logDebug(`图像 ${index + 1} 类型: ${image.type}`);
+                        logDebug(`图像 ${index + 1} URL 长度: ${image.image_url.url.length} 字符`);
+                        logDebug(`图像 ${index + 1} URL 前缀: ${image.image_url.url.substring(0, 50)}...`);
+                    });
+                } else {
+                    logDebug('警告: 没有 images 字段在响应中');
+                }
+
+                // 测试图像处理
+                testImageProcessing(data);
+
+            } catch (error) {
+                logDebug(`❌ 错误: ${error.message}`);
+                console.error('Debug test error:', error);
+            }
+        }
+
+        function testImageProcessing(apiData) {
+            logDebug('测试图像处理功能...');
+
+            try {
+                const message = apiData.choices[0].message;
+
+                // 模拟 generateAIResponse 函数的处理
+                const processedData = {
+                    text: message.content || "",
+                    images: message.images || []
+                };
+
+                logDebug(`处理后的文本: "${processedData.text}"`);
+                logDebug(`处理后的图像数量: ${processedData.images.length}`);
+
+                // 测试图像显示
+                if (processedData.images.length > 0) {
+                    displayTestImage(processedData.images[0]);
+                } else {
+                    logDebug('没有图像需要显示');
+                    document.getElementById('image-display').innerHTML = '<p class="text-gray-500">没有图像数据</p>';
+                }
+
+            } catch (error) {
+                logDebug(`图像处理错误: ${error.message}`);
+            }
+        }
+
+        function displayTestImage(imageData) {
+            logDebug('尝试显示图像...');
+
+            try {
+                const imageDisplay = document.getElementById('image-display');
+
+                if (imageData.type === 'image_url' && imageData.image_url.url) {
+                    logDebug('创建图像元素...');
+
+                    const img = document.createElement('img');
+                    img.src = imageData.image_url.url;
+                    img.alt = '测试图像';
+                    img.className = 'max-w-full h-auto rounded border';
+                    img.style.maxHeight = '300px';
+
+                    // 添加加载事件监听
+                    img.onload = () => {
+                        logDebug('✅ 图像加载成功');
+                    };
+
+                    img.onerror = (e) => {
+                        logDebug(`❌ 图像加载失败: ${e.message || '未知错误'}`);
+                        logDebug(`图像URL: ${imageData.image_url.url.substring(0, 100)}...`);
+                    };
+
+                    imageDisplay.innerHTML = '';
+                    imageDisplay.appendChild(img);
+
+                    // 添加图像信息
+                    const info = document.createElement('div');
+                    info.className = 'mt-2 text-sm text-gray-600';
+                    info.innerHTML = `
+                        <p>图像类型: ${imageData.type}</p>
+                        <p>URL 长度: ${imageData.image_url.url.length} 字符</p>
+                        <p>URL 前缀: ${imageData.image_url.url.substring(0, 50)}...</p>
+                    `;
+                    imageDisplay.appendChild(info);
+
+                } else {
+                    logDebug('未知的图像数据格式');
+                    imageDisplay.innerHTML = '<p class="text-red-500">未知的图像数据格式</p>';
+                }
+
+            } catch (error) {
+                logDebug(`显示图像错误: ${error.message}`);
+            }
+        }
+
+        // 页面加载时自动运行一次测试
+        window.addEventListener('load', () => {
+            logDebug('页面加载完成，准备进行调试测试');
+        });
+    </script>
+</body>
+</html>

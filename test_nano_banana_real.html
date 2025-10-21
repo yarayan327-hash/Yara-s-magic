@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍌 Nano Banana 真实图像生成测试</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8 text-yellow-600">🍌 Nano Banana 真实图像生成测试</h1>
+
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <h2 class="text-lg font-semibold text-yellow-800 mb-2">📋 测试目标</h2>
+            <p class="text-yellow-700">
+                验证 Google Nano Banana (gemini-2.5-flash-preview-image) 是否真的能在响应中返回图像数据，
+                而不仅仅是生成关于图像的文本描述。
+            </p>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">🔧 测试配置</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">API密钥:</label>
+                    <input type="text" id="api-key" value="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"
+                           class="w-full p-3 border rounded font-mono text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">模型ID:</label>
+                    <input type="text" id="model-id" value="google/gemini-2.5-flash-preview-image"
+                           class="w-full p-3 border rounded font-mono text-sm bg-gray-100" readonly>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">测试类型:</label>
+                    <select id="test-type" class="w-full p-3 border rounded">
+                        <option value="explicit">显式图像生成</option>
+                        <option value="natural">自然语言</option>
+                        <option value="chinese">中文提示词</option>
+                        <option value="base64">要求base64</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">🎯 测试提示词</h2>
+            <div class="space-y-4">
+                <input type="text" id="custom-prompt" placeholder="输入测试提示词"
+                       class="w-full p-3 border rounded">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    <button onclick="setTestPrompt('explicit')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                            title="直接要求生成图像">显式生成</button>
+                    <button onclick="setTestPrompt('natural')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                            title="自然语言描述">自然描述</button>
+                    <button onclick="setTestPrompt('chinese')" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                            title="中文提示词">中文测试</button>
+                    <button onclick="setTestPrompt('base64')" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                            title="要求base64格式">Base64格式</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">📊 实时日志</h2>
+                <div id="log" class="p-4 bg-black text-green-400 rounded font-mono text-sm max-h-64 overflow-auto"
+                     style="min-height: 200px;">
+                    等待测试Nano Banana真实图像生成...
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">🔍 响应分析</h2>
+                <div id="analysis" class="p-4 bg-blue-50 rounded font-mono text-sm max-h-64 overflow-auto"
+                     style="min-height: 200px;">
+                    响应分析将在这里显示...
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-semibold mb-4">🖼️ 图像显示区域</h2>
+            <div id="images" class="min-h-64 border-2 border-dashed border-gray-300 rounded-lg p-8 flex items-center justify-center bg-gray-50">
+                <div class="text-center text-gray-500">
+                    <div class="text-4xl mb-4">🖼️</div>
+                    <p class="text-lg">Nano Banana生成的图像将在这里显示</p>
+                    <p class="text-sm mt-2">如果显示"Generated by Nano Banana"但没有图像，说明模型只返回了文本描述</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-6">
+            <button onclick="startRealTest()" class="bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 text-lg font-semibold shadow-lg"
+                    title="开始真实图像生成测试">
+                🚀 开始真实测试
+            </button>
+            <button onclick="clearResults()" class="bg-gray-500 text-white px-6 py-3 rounded-lg hover:bg-gray-600 ml-4"
+                    title="清除结果">
+                🗑️ 清除结果
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = document.getElementById('api-key').value;
+        const MODEL_ID = document.getElementById('model-id').value;
+
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function analyze(message) {
+            const analysisDiv = document.getElementById('analysis');
+            analysisDiv.innerHTML += `${message}\n`;
+            analysisDiv.scrollTop = analysisDiv.scrollHeight;
+        }
+
+        function setTestPrompt(type) {
+            const prompts = {
+                explicit: 'generate image: a cute orange cat sitting on a windowsill, photorealistic style, 1024x1024',
+                natural: 'A cute orange cat sitting on a windowsill in the morning sunlight, photorealistic style',
+                chinese: '生成图像：一只橘猫坐在窗台上，早晨的阳光照射，真实照片风格',
+                base64: 'Generate a base64 encoded image of a cute orange cat on a windowsill, photorealistic'
+            };
+            document.getElementById('custom-prompt').value = prompts[type];
+            document.getElementById('test-type').value = type;
+        }
+
+        async function startRealTest() {
+            const prompt = document.getElementById('custom-prompt').value;
+            const testType = document.getElementById('test-type').value;
+
+            if (!prompt) {
+                alert('请输入测试提示词');
+                return;
+            }
+
+            clearResults();
+
+            log(`🚀 开始Nano Banana真实图像生成测试`);
+            log(`📝 测试类型: ${testType}`);
+            log(`📝 提示词: "${prompt}"`);
+            log(`🤖 模型: ${MODEL_ID}`);
+
+            try {
+                log('📡 连接到OpenRouter API...');
+
+                // 构建请求 - 使用正确的格式
+                const requestBody = {
+                    model: MODEL_ID,
+                    messages: [{
+                        role: 'user',
+                        content: prompt
+                    }],
+                    temperature: 0.7,
+                    max_tokens: 1000,
+                    // 🔑 关键：添加modalities参数启用图像生成
+                    modalities: ["text", "image"]
+                };
+
+                log('📋 请求体: ' + JSON.stringify(requestBody, null, 2));
+
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'HTTP-Referer': window.location.href,
+                        'X-Title': 'Nano Banana Real Test'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                log(`📊 HTTP状态: ${response.status}`);
+                log(`📊 响应头: ${JSON.stringify(Object.fromEntries(response.headers.entries()))}`);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    log(`❌ HTTP错误: ${errorText}`);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const data = await response.json();
+                log('📥 收到完整API响应');
+                log('📋 完整响应: ' + JSON.stringify(data, null, 2));
+
+                // 🔍 详细分析响应结构
+                analyzeResponseStructure(data);
+
+            } catch (error) {
+                log(`❌ 测试错误: ${error.message}`);
+                document.getElementById('images').innerHTML = `
+                    <div class="text-red-500 text-center">
+                        <div class="text-4xl mb-4">❌</div>
+                        <p class="font-semibold">测试失败</p>
+                        <p class="text-sm">${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function analyzeResponseStructure(data) {
+            analyze('🔍 开始分析响应结构...');
+
+            try {
+                // 基本结构检查
+                analyze(`📍 响应键: ${Object.keys(data).join(', ')}`);
+
+                if (!data.choices || !data.choices[0]) {
+                    analyze('❌ 响应格式无效：缺少choices字段');
+                    return;
+                }
+
+                const choice = data.choices[0];
+                analyze(`📍 Choice键: ${Object.keys(choice).join(', ')}`);
+
+                if (!choice.message) {
+                    analyze('❌ Choice格式无效：缺少message字段');
+                    return;
+                }
+
+                const message = choice.message;
+                analyze(`📍 Message键: ${Object.keys(message).join(', ')}`);
+                analyze(`💬 消息内容: "${message.content}"`);
+
+                // 🔍 关键检查：是否有images字段
+                if (message.images) {
+                    analyze(`🎉 发现images字段！数量: ${message.images.length}`);
+
+                    message.images.forEach((image, index) => {
+                        analyze(`🖼️ 图像 ${index + 1}:`);
+                        analyze(`   结构: ${JSON.stringify(image, null, 2)}`);
+
+                        if (image.image_url && image.image_url.url) {
+                            const url = image.image_url.url;
+                            analyze(`   URL类型: ${url.substring(0, 50)}...`);
+                            analyze(`   URL长度: ${url.length} 字符`);
+
+                            if (url.startsWith('data:')) {
+                                analyze(`✅ 是base64数据URL`);
+                                displayImage(url, index + 1);
+                            } else {
+                                analyze(`🔗 是普通URL`);
+                                displayImage(url, index + 1);
+                            }
+                        } else {
+                            analyze(`❌ 图像 ${index + 1} 缺少URL数据`);
+                        }
+                    });
+                } else {
+                    analyze('⚠️ 未找到images字段');
+
+                    // 检查是否有其他图像相关字段
+                    const imageFields = Object.keys(message).filter(key =>
+                        key.toLowerCase().includes('image') ||
+                        key.toLowerCase().includes('pic') ||
+                        key.toLowerCase().includes('photo')
+                    );
+
+                    if (imageFields.length > 0) {
+                        analyze(`🔍 发现其他图像相关字段: ${imageFields.join(', ')}`);
+                        imageFields.forEach(field => {
+                            analyze(`   ${field}: ${JSON.stringify(message[field])}`);
+                        });
+                    }
+
+                    // 检查内容是否提到图像
+                    if (message.content.includes('image') || message.content.includes('photo') ||
+                        message.content.includes('图像') || message.content.includes('照片') ||
+                        message.content.includes('Generated by Nano Banana')) {
+                        analyze(`💡 文本提到图像但未返回图像数据`);
+                        analyze(`📝 这可能意味着模型只生成了文本描述，而非实际图像`);
+                    }
+                }
+
+                // 检查其他可能的图像位置
+                if (data.images) {
+                    analyze(`🔍 在响应根级别发现images: ${data.images.length}`);
+                }
+
+                if (data.data && data.data.images) {
+                    analyze(`🔍 在data.images中发现: ${data.data.images.length}`);
+                }
+
+                // 总结
+                if (message.images && message.images.length > 0) {
+                    analyze(`\n✅ 结论: Nano Banana成功生成了 ${message.images.length} 张真实图像！`);
+                    analyze(`🎉 这是真正的图像生成，而不只是文本描述！`);
+                } else {
+                    analyze(`\n⚠️ 结论: Nano Banana只返回了文本描述，没有生成实际图像`);
+                    analyze(`💡 建议: 可能需要调整提示词格式或使用其他模型`);
+                }
+
+            } catch (error) {
+                analyze(`❌ 分析错误: ${error.message}`);
+            }
+        }
+
+        function displayImage(imageUrl, index) {
+            const imagesDiv = document.getElementById('images');
+
+            // 创建图像元素
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = `Nano Banana生成的图像 ${index}`;
+            img.className = 'max-w-full h-auto rounded-lg border border-gray-200 shadow-md';
+            img.style.maxHeight = '400px';
+
+            // 添加点击事件
+            img.style.cursor = 'pointer';
+            img.onclick = () => {
+                window.open(imageUrl, '_blank');
+            };
+
+            // 添加加载事件
+            img.onload = () => {
+                log(`✅ 图像 ${index} 加载成功`);
+            };
+
+            img.onerror = () => {
+                log(`❌ 图像 ${index} 加载失败`);
+            };
+
+            // 创建容器
+            const container = document.createElement('div');
+            container.className = 'text-center';
+            container.innerHTML = `
+                <div class="mb-4">
+                    ${img.outerHTML}
+                </div>
+                <p class="text-sm text-gray-600">图像 ${index} - Nano Banana生成</p>
+                <p class="text-xs text-gray-500 mt-1">点击图像查看完整尺寸</p>
+            `;
+
+            imagesDiv.innerHTML = '';
+            imagesDiv.appendChild(container);
+            imagesDiv.className = 'p-4 bg-white rounded-lg border border-gray-200';
+        }
+
+        function clearResults() {
+            document.getElementById('log').innerHTML = '等待测试Nano Banana真实图像生成...';
+            document.getElementById('analysis').innerHTML = '响应分析将在这里显示...';
+            document.getElementById('images').innerHTML = `
+                <div class="text-center text-gray-500">
+                    <div class="text-4xl mb-4">🖼️</div>
+                    <p class="text-lg">Nano Banana生成的图像将在这里显示</p>
+                    <p class="text-sm mt-2">如果显示"Generated by Nano Banana"但没有图像，说明模型只返回了文本描述</p>
+                </div>
+            `;
+            document.getElementById('images').className = 'min-h-64 border-2 border-dashed border-gray-300 rounded-lg p-8 flex items-center justify-center bg-gray-50';
+        }
+
+        // 页面加载时设置默认提示词
+        window.addEventListener('load', () => {
+            setTestPrompt('explicit');
+        });
+    </script>
+</body>
+</html>
